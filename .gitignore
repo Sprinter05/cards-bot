@@ -1,0 +1,5 @@
+*.bat
+*.json
+*.txt
+Database/
+node_modules/
