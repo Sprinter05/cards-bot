@@ -1,22 +1,26 @@
-const Discord = require('discord.js');
+// Discord imports
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { REST, Routes } = require('discord.js');
-const client = new Client({ intents: [GatewayIntentBits.Guilds]});
-const config = require('./config.json');
-const packages = require('./package.json')
+const { EmbedBuilder } = require('@discordjs/builders');
+
+// npm packages
 const fs = require('fs');
 const humanizeDuration = require("humanize-duration");
-const sqlite3 = require('sqlite3').verbose();
 const keyv = require('keyv');
-const { EmbedBuilder } = require('@discordjs/builders');
+
+// Import database files
 const db =  new keyv('sqlite://./Database/cards.db')
 const dbpacks =  new keyv('sqlite://./Database/packs.db')
 const dbcooldown =  new keyv('sqlite://./Database/cooldowns.db')
 const cooldowns = new keyv('sqlite://./Database/c_ids.db')
 const dpoints = new keyv('sqlite://./Database/dpoints.db')
 
-client.commands = new Collection();
+// Setup client and config
+const client = new Client({ intents: [GatewayIntentBits.Guilds]});
+const config = require('./config.json');
 
+// Create commands
+client.commands = new Collection();
 const commands = []
 const commandFiles = fs.readdirSync('./Commands/').filter(file => file.endsWith('.js'));
 for(const file of commandFiles){
@@ -29,6 +33,7 @@ for(const file of commandFiles){
 	}
 }
 
+// Run when bot is online
 client.once('ready', () => {
     console.log(`Bot is now online,\nLogged as ${client.user.tag}.\nBot is in ${client.guilds.cache.size} ` + `server(s)` + `.`)
     var Logembed = new EmbedBuilder()
@@ -41,6 +46,7 @@ client.once('ready', () => {
     client.user.setActivity('!help for commands | !info for Credits', { type: 'WATCHING' })
 })
 
+// Check that all databases are initialised
 db.on('error', err => {
     console.error('cards.db\nKeyv connection error:', err)
     var Logembed = new EmbedBuilder()
@@ -49,7 +55,6 @@ db.on('error', err => {
         .setDescription('âŒ Error connecting to `cards.db`')
     client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
 })
-
 dbpacks.on('error', err => {
     console.error('packs.db\nKeyv connection error:', err)
     var Logembed = new EmbedBuilder()
@@ -58,7 +63,6 @@ dbpacks.on('error', err => {
         .setDescription('âŒ Error connecting to `packs.db`')
     client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
 })
-
 dbcooldown.on('error', err => {
     console.error('cooldowns.db\nKeyv connection error:', err)
     var Logembed = new EmbedBuilder()
@@ -67,40 +71,26 @@ dbcooldown.on('error', err => {
         .setDescription('âŒ Error connecting to `cooldowns.db`')
     client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
 })
+dbcooldown.clear(); // Clear cooldowns (?)
 
-dbcooldown.clear();
-
+// Add slash commands
 const rest = new REST({ version: '10' }).setToken(config.token);
-
-(async () => {
-	try {
+(async () => { try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
-		const data = await rest.put(
-			Routes.applicationGuildCommands(config.clientid, config.guildid),
-			{ body: commands },
-
-            Routes.applicationCommands(config.clientid),
-	        { body: commands },
-		);
-
+		const data = await rest.put(Routes.applicationCommands(config.clientid), { body: commands });
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-	} catch (error) {
-		console.error(error);
-	}
-})();
+} catch (error) {
+	console.error(error);
+} })();
 
+// Interact to commands received
 client.on(Events.InteractionCreate, async interaction =>{
-
     if(!interaction.isChatInputCommand()) return;
-
     const command = interaction.client.commands.get(interaction.commandName);
-
-    //const args = message.content.slice(config.prefix.length).split(/ +/);
     if (interaction.commandName === 'info') {
 		await command.execute(interaction)
 	}
-
 })
 
+// Login using token
 client.login(config.token);
