@@ -41,9 +41,9 @@ const rest = new REST().setToken(token);
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 
 		// Remove global commands
-		rest.put(Routes.applicationCommands(clientId), { body: [] })
+		/*rest.put(Routes.applicationCommands(clientId), { body: [] })
 		.then(() => console.log('Successfully deleted all application commands.'))
-		.catch(console.error);
+		.catch(console.error);*/
 
 	} catch (error) {
 		// And of course, make sure you catch and log any errors!
