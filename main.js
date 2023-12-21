@@ -1,6 +1,5 @@
 // Discord imports
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { REST, Routes } = require('discord.js');
 const { EmbedBuilder } = require('@discordjs/builders');
 
 // npm packages
@@ -17,19 +16,26 @@ const dpoints = new keyv('sqlite://./Database/dpoints.db')
 
 // Setup client and config
 const client = new Client({ intents: [GatewayIntentBits.Guilds]});
-const config = require('./config.json');
+const { token } = require('./config.json');
+const path = require('node:path');
 
 // Create commands
 client.commands = new Collection();
-const commands = []
-const commandFiles = fs.readdirSync('./Commands/').filter(file => file.endsWith('.js'));
-for(const file of commandFiles){
-    const command = require(`./Commands/${file}`);
-    commands.push(command.data.toJSON());
-    if ('data' in command && 'execute' in command) {
-		client.commands.set(command.data.name, command);
-	} else {
-		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
+
+for (const folder of commandFolders) {
+	const commandsPath = path.join(foldersPath, folder);
+	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const filePath = path.join(commandsPath, file);
+		const command = require(filePath);
+		// Set a new item in the Collection with the key as the command name and the value as the exported module
+		if ('data' in command && 'execute' in command) {
+			client.commands.set(command.data.name, command);
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
 	}
 }
 
@@ -46,51 +52,21 @@ client.once('ready', () => {
     client.user.setActivity('!help for commands | !info for Credits', { type: 'WATCHING' })
 })
 
-// Check that all databases are initialised
-db.on('error', err => {
-    console.error('cards.db\nKeyv connection error:', err)
-    var Logembed = new EmbedBuilder()
-        .setColor(0x11313)
-        .setTimestamp()
-        .setDescription('âŒ Error connecting to `cards.db`')
-    client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
-})
-dbpacks.on('error', err => {
-    console.error('packs.db\nKeyv connection error:', err)
-    var Logembed = new EmbedBuilder()
-        .setColor(0x11313)
-        .setTimestamp()
-        .setDescription('âŒ Error connecting to `packs.db`')
-    client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
-})
-dbcooldown.on('error', err => {
-    console.error('cooldowns.db\nKeyv connection error:', err)
-    var Logembed = new EmbedBuilder()
-        .setColor(0x11313)
-        .setTimestamp()
-        .setDescription('âŒ Error connecting to `cooldowns.db`')
-    client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
-})
-dbcooldown.clear(); // Clear cooldowns (?)
-
-// Add slash commands
-const rest = new REST({ version: '10' }).setToken(config.token);
-(async () => { try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-		const data = await rest.put(Routes.applicationCommands(config.clientid), { body: commands });
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
-} catch (error) {
-	console.error(error);
-} })();
-
 // Interact to commands received
-client.on(Events.InteractionCreate, async interaction =>{
+client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
     const command = interaction.client.commands.get(interaction.commandName);
-    if (interaction.commandName === 'info') {
-		await command.execute(interaction)
-	}
+    try { 
+        await command.execute(interaction); 
+    } catch(error) {
+        console.error(error);
+        if (interaction.replied || interaction.deferred) {
+			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+		} else {
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
+    }
 })
 
 // Login using token
-client.login(config.token);
+client.login(token);

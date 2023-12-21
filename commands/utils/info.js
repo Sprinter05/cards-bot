@@ -3,8 +3,8 @@ const { SlashCommandBuilder } = require("discord.js")
 
 module.exports = {
     data: new SlashCommandBuilder()
-    .setName('info')
-    .setDescription ("This command is to show the information about the bot"),
+        .setName('info')
+        .setDescription ("This command is to show the information about the bot"),
     async execute(interaction){
         var embed = new EmbedBuilder()
         .setTitle("Paper Mario Card Packs")
