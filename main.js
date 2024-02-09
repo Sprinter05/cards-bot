@@ -1,18 +1,24 @@
 // Discord imports
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { EmbedBuilder } = require('@discordjs/builders');
+
+// Database
+const Sequelize = require('sequelize');
+const cardsdb = new Sequelize('cards', 'accessDB', 'testdb', {
+    host: '127.0.1.1',
+    dialect: 'mariadb',
+    logging: false,
+
+})
+
+// Login into database
+cardsdb.authenticate().then(() => {
+    console.log('Connection has been established successfully.');
+ }).catch((error) => {
+    console.error('Unable to connect to the database: ', error);
+ });
 
 // npm packages
 const fs = require('fs');
-const humanizeDuration = require("humanize-duration");
-const keyv = require('keyv');
-
-// Import database files
-const db =  new keyv('sqlite://./Database/cards.db')
-const dbpacks =  new keyv('sqlite://./Database/packs.db')
-const dbcooldown =  new keyv('sqlite://./Database/cooldowns.db')
-const cooldowns = new keyv('sqlite://./Database/c_ids.db')
-const dpoints = new keyv('sqlite://./Database/dpoints.db')
 
 // Setup client and config
 const client = new Client({ intents: [GatewayIntentBits.Guilds]});
@@ -23,7 +29,6 @@ const path = require('node:path');
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
-
 for (const folder of commandFolders) {
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -39,25 +44,12 @@ for (const folder of commandFolders) {
 	}
 }
 
-// Run when bot is online
-client.once('ready', () => {
-    console.log(`Bot is now online,\nLogged as ${client.user.tag}.\nBot is in ${client.guilds.cache.size} ` + `server(s)` + `.`)
-    var Logembed = new EmbedBuilder()
-        .setTitle(`âœ… Bot is now online!`)
-        .setColor(0x53da1f)
-        .setTimestamp()
-        .setDescription(`Logged as ` + '`' + `${client.user.tag}` + '`' + `.\nBot is in **${client.guilds.cache.size}** ` + `server(s)` + '.')
-    client.channels.cache.get("748551379101941851").send({embeds: [Logembed]})
-    client.user.setStatus('available')
-    client.user.setActivity('!help for commands | !info for Credits', { type: 'WATCHING' })
-})
-
 // Interact to commands received
 client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
     const command = interaction.client.commands.get(interaction.commandName);
     try { 
-        await command.execute(interaction); 
+        await command.execute(interaction, cardsdb);
     } catch(error) {
         console.error(error);
         if (interaction.replied || interaction.deferred) {
@@ -67,6 +59,19 @@ client.on(Events.InteractionCreate, async interaction => {
 		}
     }
 })
+
+// Event handling
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args, cardsdb));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args, cardsdb));
+	}
+}
 
 // Login using token
 client.login(token);

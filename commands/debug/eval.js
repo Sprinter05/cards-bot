@@ -10,7 +10,7 @@ module.exports = {
     .addStringOption(option =>
       option.setName('cmd')
         .setDescription('Evaluate code')),
-  async execute(interaction){
+  async execute(interaction, cardsdb){
     if (interaction.member.id !== botowner){
       var evalEmbed = new EmbedBuilder()
         .setDescription("❌ You are not the `Bot Owner` so you can't use this command.")

@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('info')
         .setDescription ("This command is to show the information about the bot"),
-    async execute(interaction){
+    async execute(interaction, cardsdb){
         var embed = new EmbedBuilder()
         .setTitle("Paper Mario Card Packs")
         .addFields(
