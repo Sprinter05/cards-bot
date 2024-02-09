@@ -3,11 +3,11 @@ const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
 // Database
 const Sequelize = require('sequelize');
-const cardsdb = new Sequelize('cards', 'accessDB', 'testdb', {
-    host: '127.0.1.1',
+const { database } = require("./config.json")
+const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd, {
+    host: database.ip,
     dialect: 'mariadb',
     logging: false,
-
 })
 
 // Login into database
@@ -61,7 +61,7 @@ client.on(Events.InteractionCreate, async interaction => {
 })
 
 // Event handling
-const eventsPath = path.join(__dirname, 'events');
+const eventsPath = path.join(__dirname, 'utils/events');
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 for (const file of eventFiles) {
 	const filePath = path.join(eventsPath, file);

@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-var { cardEmbed, cardsMaxPage, cardRow } = require('../utils/cardCreator.js')
+var { cardEmbed, cardsMaxPage, cardRow } = require('../cardCreator')
 
 module.exports = {
 	name: Events.InteractionCreate,
