@@ -6,6 +6,10 @@ module.exports = {
 	async execute(interaction, db) {
         if (!interaction.isButton()) return;
 	    else if (interaction.isButton()) {
+            if (interaction.user.id !== interaction.message.interaction.user.id){
+                await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
+                return;
+            }
             if(interaction.customId === 'cardNext' || interaction.customId === 'cardPrev'){
                 currEmbed = interaction.message.embeds[0].data
                 uID = interaction.user.id
