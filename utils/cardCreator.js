@@ -40,3 +40,25 @@ exports.cardEmbed = async function(db, uID, page){
         .setFooter({ text: `Page ${page}` })
     return embed;
 }
+
+exports.rarityColor = async function(db, rarity){
+    var color = ""
+    switch(rarity){
+        case 1:
+            color = "#8F8D8E"
+            break;
+        case 2:
+            color = "#F29658"
+            break;
+        case 3:
+            color = "#DB757B"
+            break;
+        case 4:
+            color = "#F2CF44"
+            break;
+        default:
+            color = "#FFFFFF"
+            break;
+    }
+    return color;
+}

@@ -20,3 +20,21 @@ exports.queryCards = async function(database, id, page) {
     }
     return outputStr;
 }
+
+exports.getCardData = async function(database, card){
+    const cardInfo = await database.query(
+        `SELECT card_id, card_name, card_rarity_id, card_img_url FROM cards WHERE card_name="${card}";`,
+        {type: QueryTypes.SELECT}
+    )
+    return cardInfo;
+}
+
+exports.checkCardOwn = async function(database, id, cardId){
+    const ownCheck = await database.query(
+        `SELECT card_id FROM user_cards WHERE card_id="${cardId}" AND user_id=${id};`,
+        {type: QueryTypes.SELECT}
+    )
+    if (ownCheck.length === 0){
+        return false
+    } else {return true}
+}

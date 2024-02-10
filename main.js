@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
 const { database } = require("./config.json")
 const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd, {
     host: database.ip,
-    dialect: 'mariadb',
+    dialect: 'mysql',
     logging: false,
 })
 
