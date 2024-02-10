@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js")
 var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/cardCreator.js')
+var { countCards } = require('../../utils/queries.js')
 
 module.exports = {
     // Define data to export to Discord
@@ -23,6 +24,12 @@ module.exports = {
     async execute(interaction, cardsdb){
         const user = interaction.options.getUser('user') ?? interaction.user;
         var page = interaction.options.getInteger('page') ?? 1;
+
+        if ((await countCards(cardsdb, user.id)) <= 0){
+            await interaction.reply("You don't have any cards!");
+            return;
+        }
+
         var maxPage = await cardsMaxPage(cardsdb, user.id)
         var rRow = await cardRow(page, maxPage)
         var rEmbed = await cardEmbed(cardsdb, user.id, page)
