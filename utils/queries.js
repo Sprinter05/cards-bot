@@ -1,5 +1,5 @@
 const { QueryTypes } = require('sequelize');
-const { entries } = require('../config.json')
+const { entries } = require('../properties.json')
 
 exports.countCards = async function(database, id){
     const countCards = await database.query(

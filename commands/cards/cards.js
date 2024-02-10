@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js")
-var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/cardCreator.js')
+var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/functionExporter.js')
 var { countCards } = require('../../utils/queries.js')
 
 module.exports = {
@@ -31,12 +31,12 @@ module.exports = {
         }
 
         var maxPage = await cardsMaxPage(cardsdb, user.id)
-        var rRow = await cardRow(page, maxPage)
-        var rEmbed = await cardEmbed(cardsdb, user.id, page)
+        var row = await cardRow(page, maxPage)
+        var embed = await cardEmbed(cardsdb, user.id, page)
 
         await interaction.reply({
-            embeds: [rEmbed],
-            components: [rRow],
+            embeds: [embed],
+            components: [row],
         })
     }
 }

@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-var { cardEmbed, cardsMaxPage, cardRow } = require('../cardCreator')
+var { cardEmbed, cardsMaxPage, cardRow } = require('../functionExporter')
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -10,7 +10,7 @@ module.exports = {
                 await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
                 return;
             }
-            if(interaction.customId === 'cardNext' || interaction.customId === 'cardPrev'){
+            if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
                 currEmbed = interaction.message.embeds[0].data
                 uID = interaction.user.id
 

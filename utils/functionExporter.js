@@ -1,6 +1,6 @@
 var { countCards, queryCards } = require('./queries.js')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
-const { entries } = require('../config.json')
+const { entries } = require('../properties.json')
 
 exports.cardsMaxPage = async function(db, uID){
     var totalEntries = await countCards(db, uID)
@@ -41,7 +41,7 @@ exports.cardEmbed = async function(db, uID, page){
     return embed;
 }
 
-exports.rarityColor = async function(db, rarity){
+exports.rarityColor = async function(rarity){
     var color = ""
     switch(rarity){
         case 1:
