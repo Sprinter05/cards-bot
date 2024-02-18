@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
 var { getCardData, checkCardOwn } = require('../../utils/queries.js')
-var { rarityColor } = require('../../utils/functionExporter.js')
+var { rarityRequest } = require('../../utils/functionExporter.js')
 
 module.exports = {
     // Define data to export to Discord
@@ -23,7 +23,8 @@ module.exports = {
         }
 
         const cardOwned = await checkCardOwn(cardsdb, interaction.user.id, outputCard[0]['card_id'])
-        const cardColor = await rarityColor(outputCard[0]['card_rarity_id'])
+        const cardColor = rarityRequest(outputCard[0]['card_rarity_id'], 'color')
+        const cardIcon = rarityRequest(outputCard[0]['card_rarity_id'], 'iconURL')
         var footerText = ""
         if (cardOwned === true){footerText="You own this card"}
         else {footerText="You don't own this card"}
@@ -32,7 +33,7 @@ module.exports = {
             .setTitle(`__${outputCard[0]['card_name']}__`)
             .setImage(outputCard[0]['card_img_url'])
             .setColor(cardColor)
-            .setFooter({ text: `ID: ${outputCard[0]['card_id']}  |  ${footerText}` })
+            .setFooter({ text: `ID: ${outputCard[0]['card_id']}  |  ${footerText}` , iconURL: cardIcon})
         await interaction.reply({
             embeds: [embed],
         })

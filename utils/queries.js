@@ -11,14 +11,16 @@ exports.countCards = async function(database, id){
 exports.queryCards = async function(database, id, page) {
     const offset = (page-1)*entries
     const userCards = await database.query(
-        `SELECT card_name FROM user_cards NATURAL JOIN cards WHERE user_id=${id} LIMIT ${entries} OFFSET ${offset};`,
+        `SELECT card_name, card_rarity_id FROM user_cards NATURAL JOIN cards WHERE user_id=${id} LIMIT ${entries} OFFSET ${offset};`,
         {type: QueryTypes.SELECT}
     );
-    var outputStr = '';
+    var outputJson = {};
     for(var i = 0; i < userCards.length; i++){
-        outputStr += `${userCards[i]['card_name']}\n`
+        outputJson[`${i}`] = {}
+        outputJson[`${i}`].name = userCards[i]['card_name']
+        outputJson[`${i}`].rarity = userCards[i]['card_rarity_id']
     }
-    return outputStr;
+    return outputJson;
 }
 
 exports.getCardData = async function(database, card){
