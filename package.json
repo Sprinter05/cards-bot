@@ -3,18 +3,21 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
+    "start": "nodemon main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@keyv/sqlite": "^3.6.6",
     "discord.js": "^14.14.1",
     "mariadb": "^3.2.3",
     "mysql2": "^3.9.1",
     "path": "^0.12.7",
     "sequelize": "^6.36.0",
     "util": "^0.12.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
