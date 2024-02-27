@@ -18,7 +18,8 @@ module.exports = {
         const user = interaction.options.getUser('user') ?? interaction.user;
 
         if ((await countPacks(cardsdb, user.id)) <= 0){
-            await interaction.reply("You don't have any packs!");
+            if (user.id === interaction.user.id) await interaction.reply("You don't have any packs!");
+            else await interaction.reply(`${user.username} doesn't have any packs!`);
             return;
         }
 

@@ -26,8 +26,8 @@ module.exports = {
         var page = interaction.options.getInteger('page') ?? 1;
 
         if ((await countCards(cardsdb, user.id)) <= 0){
-            await interaction.reply("You don't have any cards!");
-            return;
+            if (user.id === interaction.user.id) await interaction.reply("You don't have any cards!");
+            else await interaction.reply(`${user.username} doesn't have any cards!`);
         }
 
         var maxPage = await cardsMaxPage(cardsdb, user.id)
