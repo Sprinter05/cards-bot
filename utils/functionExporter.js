@@ -1,4 +1,4 @@
-var { countCards, queryCards } = require('./queries.js')
+var { countCards, queryCards, queryPacks } = require('./queries.js')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
 const { entries } = require('../properties.json')
 
@@ -35,15 +35,48 @@ exports.cardEmbed = async function(db, uID, page){
     if (page > maxPage){page = maxPage}
     var outputQuery = await queryCards(db, uID, page)
     var outputStr = ''
-    var rarityEmoji = ''
     for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
-        rarityEmoji = exports.rarityRequest(outputQuery[`${i}`].rarity, 'emoji')
-        outputStr += `${rarityEmoji} ${outputQuery[`${i}`].name}\n`
+        let rarityEmoji = exports.rarityRequest(outputQuery[`${i}`].rarity, 'emoji')
+        let countCard = ''
+        if (outputQuery[`${i}`].count !== 1) {countCard = `x${outputQuery[`${i}`].count}`}
+        outputStr += `${rarityEmoji} ${outputQuery[`${i}`].name} ${countCard}\n`
     }
     var embed = new EmbedBuilder()
         .setTitle("These are your cards:")
         .setDescription(outputStr)
+        .setColor('#18E6E6')
         .setFooter({ text: `Page ${page}` })
+    return embed;
+}
+
+exports.packEmbed = async function(db, uID){
+    var outputQuery = await queryPacks(db, uID)
+    var outputStr = ''
+    for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
+        let packEmoji = '' 
+        switch(outputQuery[`${i}`].name){
+            case 'Free Pack':
+                packEmoji = '<:free_pack:1212011824002760714>'
+                break;
+            case 'Special Pack':
+                packEmoji = '<:special_pack:1212011901651918869>'
+                break;
+            case 'Ultra Rare Pack':
+                packEmoji = '<:ultra_pack:1212011924771045426>'
+                break;
+            case 'Exclusive Pack':
+                packEmoji = '<:exclusive_pack:1212011946191102052>'
+                break;
+            default:
+                packEmoji = ''
+                break;
+        }
+        outputStr += `${packEmoji} ${outputQuery[`${i}`].name} x${outputQuery[`${i}`].count}\n`
+    }
+    var embed = new EmbedBuilder()
+        .setTitle("These are your packs:")
+        .setDescription(outputStr)
+        .setColor('#18E6E6')
     return embed;
 }
 
