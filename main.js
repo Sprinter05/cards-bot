@@ -1,5 +1,7 @@
-// Discord imports
+// Discord and command imports
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { checkUser } = require('./utils/queries')
+const { logUser } = require('./utils/manips')
 
 // Database
 const Sequelize = require('sequelize');
@@ -48,7 +50,12 @@ for (const folder of commandFolders) {
 client.on(Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
     const command = interaction.client.commands.get(interaction.commandName);
-    try { 
+	const cardCmds = fs.readdirSync(path.join(__dirname, 'commands/cards'))
+    try {
+		// Check if command is cards related and if user is in the users database 
+		if (cardCmds.includes(interaction.commandName.concat('.js')) && (await checkUser(cardsdb, interaction.user.id)).length === 0 ){
+			logUser(cardsdb, interaction.user.id)
+		}
         await command.execute(interaction, cardsdb);
     } catch(error) {
         console.error(error);

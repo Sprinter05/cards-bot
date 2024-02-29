@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js")
 var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/functionExporter.js')
-var { countCards } = require('../../utils/queries.js')
+var { countCards, checkUser } = require('../../utils/queries.js')
 
 module.exports = {
     // Define data to export to Discord
@@ -23,16 +23,18 @@ module.exports = {
     // Main function
     async execute(interaction, cardsdb){
         const user = interaction.options.getUser('user') ?? interaction.user;
+        const queryId = await checkUser(cardsdb, user.id)
+        const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
         var page = interaction.options.getInteger('page') ?? 1;
 
-        if ((await countCards(cardsdb, user.id)) <= 0){
-            if (user.id === interaction.user.id) await interaction.reply("You don't have any cards!");
-            else await interaction.reply(`${user.username} doesn't have any cards!`);
+        if ((await countCards(cardsdb, dbId)) <= 0){
+            if (user.id === interaction.user.id) return await interaction.reply("You don't have any cards!");
+            else return await interaction.reply(`${user.username} doesn't have any cards!`);
         }
 
-        var maxPage = await cardsMaxPage(cardsdb, user.id)
+        var maxPage = await cardsMaxPage(cardsdb, dbId)
         var row = await cardRow(page, maxPage)
-        var embed = await cardEmbed(cardsdb, user.id, page)
+        var embed = await cardEmbed(cardsdb, dbId, page)
 
         await interaction.reply({
             embeds: [embed],

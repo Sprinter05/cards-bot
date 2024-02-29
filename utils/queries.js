@@ -1,6 +1,14 @@
 const { QueryTypes } = require('sequelize');
 const { entries } = require('../properties.json')
 
+exports.checkUser = async function(database, discordId){
+    const userExist = await database.query(
+        `SELECT user_id FROM users WHERE discord_id=${discordId};`,
+        {type: QueryTypes.SELECT}
+    );
+    return userExist
+}
+
 exports.countCards = async function(database, id){
     const countCards = await database.query(
         `SELECT COUNT(card_id) FROM user_cards WHERE user_id=${id};`,
@@ -12,7 +20,7 @@ exports.countCards = async function(database, id){
 exports.queryCards = async function(database, id, page) {
     const offset = (page-1)*entries
     const userCards = await database.query(
-        `SELECT card_name, card_rarity_id, COUNT(card_id) FROM user_cards NATURAL JOIN cards WHERE user_id=${id} GROUP BY card_id LIMIT ${entries} OFFSET ${offset};`,
+        `SELECT card_name, card_rarity_id, quantity FROM user_cards NATURAL JOIN cards WHERE user_id=${id} LIMIT ${entries} OFFSET ${offset};`,
         {type: QueryTypes.SELECT}
     );
     var outputJson = {};
@@ -20,9 +28,20 @@ exports.queryCards = async function(database, id, page) {
         outputJson[`${i}`] = {}
         outputJson[`${i}`].name = userCards[i]['card_name']
         outputJson[`${i}`].rarity = userCards[i]['card_rarity_id']
-        outputJson[`${i}`].count = userCards[i]['COUNT(card_id)']
+        outputJson[`${i}`].count = userCards[i]['quantity']
     }
     return outputJson;
+}
+
+exports.checkDupes = async function(database, id) {
+    const userDupes = await database.query(
+        `SELECT COUNT(card_id) FROM user_cards WHERE user_id=${id} GROUP BY card_id;`,
+        {type: QueryTypes.SELECT}
+    );
+    for(var i = 0; i < userDupes.length; i++){
+        if (userDupes[i]['COUNT(card_id)'] > 1) return true;
+    }
+    return false;
 }
 
 exports.getCardData = async function(database, card){

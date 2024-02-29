@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-var { getCardData, checkCardOwn } = require('../../utils/queries.js')
+var { getCardData, checkCardOwn, checkUser } = require('../../utils/queries.js')
 var { rarityRequest } = require('../../utils/functionExporter.js')
 
 module.exports = {
@@ -22,7 +22,10 @@ module.exports = {
             return;
         }
 
-        const cardOwned = await checkCardOwn(cardsdb, interaction.user.id, outputCard[0]['card_id'])
+        const queryId = await checkUser(cardsdb, interaction.user.id)
+        const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
+
+        const cardOwned = await checkCardOwn(cardsdb, dbId, outputCard[0]['card_id'])
         const cardColor = rarityRequest(outputCard[0]['card_rarity_id'], 'color')
         const cardIcon = rarityRequest(outputCard[0]['card_rarity_id'], 'iconURL')
         var footerText = ""
