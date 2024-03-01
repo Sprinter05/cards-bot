@@ -32,9 +32,10 @@ module.exports = {
             else return await interaction.reply(`${user.username} doesn't have any cards!`);
         }
 
+        const msgEqId = interaction.user.id === user.id ? 0 : user.username
         var maxPage = await cardsMaxPage(cardsdb, dbId)
         var row = await cardRow(page, maxPage)
-        var embed = await cardEmbed(cardsdb, dbId, page)
+        var embed = await cardEmbed(cardsdb, dbId, msgEqId, page)
 
         await interaction.reply({
             embeds: [embed],

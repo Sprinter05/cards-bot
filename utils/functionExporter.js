@@ -30,10 +30,10 @@ exports.cardRow = async function(page, maxPage){
     return row;
 }
 
-exports.cardEmbed = async function(db, uID, page){
-    maxPage = await exports.cardsMaxPage(db, uID, entries)
+exports.cardEmbed = async function(db, dbId, titleUser, page){
+    maxPage = await exports.cardsMaxPage(db, dbId, entries)
     if (page > maxPage){page = maxPage}
-    var outputQuery = await queryCards(db, uID, page)
+    var outputQuery = await queryCards(db, dbId, page)
     var outputStr = ''
     for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
         let rarityEmoji = exports.rarityRequest(outputQuery[`${i}`].rarity, 'emoji')
@@ -41,15 +41,16 @@ exports.cardEmbed = async function(db, uID, page){
         if (outputQuery[`${i}`].count !== 1) {countCard = `x${outputQuery[`${i}`].count}`}
         outputStr += `${rarityEmoji} ${outputQuery[`${i}`].name} ${countCard}\n`
     }
+    const title = titleUser === 0 ? `These are your cards:` : `These are ${titleUser}'s cards:`
     var embed = new EmbedBuilder()
-        .setTitle("These are your cards:")
+        .setTitle(title)
         .setDescription(outputStr)
         .setColor('#18E6E6')
-        .setFooter({ text: `Page ${page}` })
+        .setFooter({ text: `Page ${page} ╏ ID ${dbId}` })
     return embed;
 }
 
-exports.packEmbed = async function(db, uID){
+exports.packEmbed = async function(db, titleUser, uID){
     var outputQuery = await queryPacks(db, uID)
     var outputStr = ''
     for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
@@ -73,8 +74,9 @@ exports.packEmbed = async function(db, uID){
         }
         outputStr += `${packEmoji} ${outputQuery[`${i}`].name} x${outputQuery[`${i}`].count}\n`
     }
+    const title = titleUser === 0 ? `These are your packs:` : `These are ${titleUser}'s packs:`
     var embed = new EmbedBuilder()
-        .setTitle("These are your packs:")
+        .setTitle(title)
         .setDescription(outputStr)
         .setColor('#18E6E6')
     return embed;

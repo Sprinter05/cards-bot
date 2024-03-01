@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js")
 var { packEmbed } = require('../../utils/functionExporter.js')
-var { countPacks } = require('../../utils/queries.js')
+var { countPacks, checkUser } = require('../../utils/queries.js')
 
 module.exports = {
     // Define data to export to Discord
@@ -16,14 +16,17 @@ module.exports = {
     // Main function
     async execute(interaction, cardsdb){
         const user = interaction.options.getUser('user') ?? interaction.user;
+        const queryId = await checkUser(cardsdb, user.id)
+        const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
 
-        if ((await countPacks(cardsdb, user.id)) <= 0){
+        if ((await countPacks(cardsdb, dbId)) <= 0){
             if (user.id === interaction.user.id) await interaction.reply("You don't have any packs!");
             else await interaction.reply(`${user.username} doesn't have any packs!`);
             return;
         }
 
-        var embed = await packEmbed(cardsdb, user.id)
+        const msgEqId = interaction.user.id === user.id ? 0 : user.username
+        var embed = await packEmbed(cardsdb, msgEqId, dbId)
 
         await interaction.reply({
             embeds: [embed],

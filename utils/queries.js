@@ -72,14 +72,14 @@ exports.countPacks = async function(database, id){
 
 exports.queryPacks = async function(database, id){
     const userPacks = await database.query(
-        `SELECT pack_name, COUNT(pack_id) FROM user_packs NATURAL JOIN packs WHERE user_id=${id} GROUP BY pack_id;`,
+        `SELECT pack_name, quantity FROM user_packs NATURAL JOIN packs WHERE user_id=${id};`,
         {type: QueryTypes.SELECT}
     );
     var outputJson = {};
     for(var i = 0; i < userPacks.length; i++){
         outputJson[`${i}`] = {}
         outputJson[`${i}`].name = userPacks[i]['pack_name']
-        outputJson[`${i}`].count = userPacks[i]['COUNT(pack_id)']
+        outputJson[`${i}`].count = userPacks[i]['quantity']
     }
     return outputJson;
 }

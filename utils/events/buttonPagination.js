@@ -14,23 +14,23 @@ module.exports = {
             if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
                 currEmbed = interaction.message.embeds[0].data
                 uId = interaction.user.id
-                dbId = (await checkUser(db, uId))[0]['user_id']
-
+                chkDbId = (await checkUser(db, uId))[0]['user_id']
+                dbId = parseInt(currEmbed.footer.text.split(' ╏ ')[1].replace('ID ',''))
+                
                 offset = 0;
                 if(interaction.customId === 'cardNext'){offset = 1}
                 else if(interaction.customId === 'cardPrev'){offset = -1}
 
-                page = parseInt(currEmbed.footer.text.replace('Page ',''))+offset
+                const msgTitle = dbId === chkDbId ? 0 : currEmbed.title.replace('These are ', '').replace(`'s cards:`, '')
+                page = parseInt(currEmbed.footer.text.split(' ╏ ')[0].replace('Page ',''))+offset
                 maxPage = await cardsMaxPage(db, dbId)
                 
-                newEmbed = await cardEmbed(db, dbId, page)
+                newEmbed = await cardEmbed(db, dbId, msgTitle, page)
                 newRow = await cardRow(page, maxPage)
 
                 // MariaDB moment
-                checkPage = parseInt(newEmbed.data.footer.text.replace('Page ', ''))
-                maxPage = await cardsMaxPage(db, dbId)
-                if (checkPage <= 1) {newRow.components[0].setDisabled(true)}
-                if (checkPage >= maxPage) {newRow.components[1].setDisabled(true)}
+                if (page <= 1) {newRow.components[0].setDisabled(true)}
+                if (page >= maxPage) {newRow.components[1].setDisabled(true)}
 
                 await interaction.update({
                     embeds: [newEmbed],
