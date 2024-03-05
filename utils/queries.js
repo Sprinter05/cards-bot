@@ -35,11 +35,11 @@ exports.queryCards = async function(database, id, page) {
 
 exports.checkDupes = async function(database, id) {
     const userDupes = await database.query(
-        `SELECT COUNT(card_id) FROM user_cards WHERE user_id=${id} GROUP BY card_id;`,
+        `SELECT quantity FROM user_cards WHERE user_id=${id};`,
         {type: QueryTypes.SELECT}
     );
     for(var i = 0; i < userDupes.length; i++){
-        if (userDupes[i]['COUNT(card_id)'] > 1) return true;
+        if (userDupes[i]['quantity'] > 1) return true;
     }
     return false;
 }

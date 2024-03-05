@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, DefaultWebSocketManagerOptions } = require("discord.js")
-var { checkDupes } = require('../../utils/queries.js')
-var { deleteCard } = require('../../utils/manips.js')
+var { checkDupes, checkUser } = require('../../utils/queries.js')
+var { scrapeCard, updateMoney } = require('../../utils/manips.js')
 var { rarityRequest } = require('../../utils/functionExporter.js')
 
 module.exports = {
@@ -38,7 +38,10 @@ module.exports = {
         ),
     // Main function
     async execute(interaction, cardsdb){
-        if (await checkDupes(cardsdb, interaction.user.id) === false) return await interaction.reply("You have no duplicate cards!")
+        const queryId = await checkUser(cardsdb, interaction.user.id)
+        const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
+        if (await checkDupes(cardsdb, dbId) === false && interaction.options.getSubcommand() === 'collection') return await interaction.reply("You have no duplicate cards!")
+        
         var arg = ''
         if (interaction.options.getSubcommand() === 'collection') arg = interaction.options.getString('type')
         else arg = interaction.options.getString('card')
@@ -52,7 +55,10 @@ module.exports = {
             case 'all':
                 break;
             default:
-                deleteCard(cardsdb, interaction.user.id, arg)
+                let money = await scrapeCard(cardsdb, dbId, arg)
+                if (money === -1) return await interaction.reply(`You don't have that card!`)
+                updateMoney(cardsdb, dbId, money)
+                await interaction.reply(`Scraped card **${arg}** for **${money}** <:coin:1214561654629728326>`)
                 break;
         }
     }
