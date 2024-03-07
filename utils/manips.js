@@ -39,6 +39,21 @@ exports.scrapeCard = async function(database, id, card){
     return scrapeMoney;
 }
 
+exports.scrapeCollection = async function(database, id, rarity){
+    const nQuery = await database.query(
+        `SELECT card_name, quantity FROM user_cards NATURAL JOIN cards WHERE card_rarity_id=${rarity} AND user_id=${id} AND quantity>1;`,
+        {type: QueryTypes.SELECT}
+    )
+    if (nQuery.length === 0) return -1
+    var totalMoney = 0
+    for(let i=0; i<nQuery.length; i++){
+        for(let j=0; j<(nQuery[i]['quantity']-1); j++){
+            totalMoney += await exports.scrapeCard(database, id, nQuery[i]['card_name'])
+        }
+    }
+    return totalMoney
+}
+
 exports.updateMoney = async function(database, id, mon){
     const moreMon = await database.query(
         `UPDATE users SET coins=coins+${mon} WHERE user_id=${id};`,
