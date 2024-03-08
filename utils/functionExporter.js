@@ -1,6 +1,6 @@
 var { countCards, queryCards, queryPacks } = require('./queries.js')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
-const { entries } = require('../properties.json')
+const { entries, rarColors, rarEmojis, rarIcons, pacEmojis } = require('../properties.json')
 
 exports.cardsMaxPage = async function(db, uID){
     var totalEntries = await countCards(db, uID)
@@ -57,16 +57,16 @@ exports.packEmbed = async function(db, titleUser, uID){
         let packEmoji = '' 
         switch(outputQuery[`${i}`].name){
             case 'Free Pack':
-                packEmoji = '<:free_pack:1212011824002760714>'
+                packEmoji = pacEmojis.fPack
                 break;
             case 'Special Pack':
-                packEmoji = '<:special_pack:1212011901651918869>'
+                packEmoji = pacEmojis.sPack
                 break;
             case 'Ultra Rare Pack':
-                packEmoji = '<:ultra_pack:1212011924771045426>'
+                packEmoji = pacEmojis.urPack
                 break;
             case 'Exclusive Pack':
-                packEmoji = '<:exclusive_pack:1212011946191102052>'
+                packEmoji = pacEmojis.ePack
                 break;
             default:
                 packEmoji = ''
@@ -88,13 +88,13 @@ exports.rarityRequest = function(rarity, request){
         case 1:
             switch(request){
                 case 'color':
-                    retValue = '#8F8D8E'
+                    retValue = rarColors.nCard
                     break;
                 case 'emoji':
-                    retValue = '<:normal_card:1208719611466616862>'
+                    retValue = rarEmojis.nCard
                     break;
                 case 'iconURL':
-                    retValue = 'https://media.discordapp.net/attachments/1208718279904985098/1208718359823122493/normal.png?ex=65e44db1&is=65d1d8b1&hm=386a6e6d2a004b453cd8df4e768017ac1c3be069fe69b85fa86aeffaad928f07'
+                    retValue = rarIcons.nCard
                     break;
                 default:
                     retValue = ''
@@ -104,13 +104,13 @@ exports.rarityRequest = function(rarity, request){
         case 2:
             switch(request){
                 case 'color':
-                    retValue = '#F29658'
+                    retValue = rarColors.rCard
                     break;
                 case 'emoji':
-                    retValue = '<:rare_card:1208721050783842314>'
+                    retValue = rarEmojis.rCard
                     break;
                 case 'iconURL':
-                    retValue = 'https://media.discordapp.net/attachments/1208718279904985098/1208718370422399056/rare.png?ex=65e44db4&is=65d1d8b4&hm=e536921c8e624d764329119c0cd3928f9bf9e03111d53952dea042d883d9a70d'
+                    retValue = rarIcons.rCard
                     break;
                 default:
                     retValue = ''
@@ -120,13 +120,13 @@ exports.rarityRequest = function(rarity, request){
         case 3:
             switch(request){
                 case 'color':
-                    retValue = '#DB757B'
+                    retValue = rarColors.urCard
                     break;
                 case 'emoji':
-                    retValue = '<:ultrarare_card:1208721064339701770>'
+                    retValue = rarEmojis.urCard
                     break;
                 case 'iconURL':
-                    retValue = 'https://media.discordapp.net/attachments/1208718279904985098/1208718379448275024/ultrarare.png?ex=65e44db6&is=65d1d8b6&hm=4ce37bb5dea1028374e00fce245a520de562610040b248c1c252b6c28ff4d9eb'
+                    retValue = rarIcons.urCard
                     break;
                 default:
                     retValue = ''
@@ -136,13 +136,13 @@ exports.rarityRequest = function(rarity, request){
         case 4:
             switch(request){
                 case 'color':
-                    retValue = '#F2CF44'
+                    retValue = rarColors.sCard
                     break;
                 case 'emoji':
-                    retValue = '<:special_card:1208721078403338240>'
+                    retValue = rarEmojis.sCard
                     break;
                 case 'iconURL':
-                    retValue = 'https://media.discordapp.net/attachments/1208718279904985098/1208718389904674817/special.png?ex=65e44db9&is=65d1d8b9&hm=d317e061c963ec60c032f10122f8b3df5ea7f30f5476527ba64e0a88334b78a5'
+                    retValue = rarIcons.sCard
                     break;
                 default:
                     retValue = ''

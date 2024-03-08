@@ -9,9 +9,20 @@ exports.checkUser = async function(database, discordId){
     return userExist
 }
 
-exports.countCards = async function(database, id){
+exports.checkMoney = async function(database, id){
+    const money = await database.query(
+        `SELECT coins FROM users WHERE user_id=${id}`,
+        {type: QueryTypes.SELECT}
+    )
+    return money[0]['coins']
+}
+
+exports.countCards = async function(database, id, rarity){
+    let rQuery
+    if (rarity !== undefined) rQuery = `AND card_rarity_id=${rarity}`
+    else rQuery = ''
     const countCards = await database.query(
-        `SELECT COUNT(card_id) FROM user_cards WHERE user_id=${id};`,
+        `SELECT COUNT(card_id) FROM user_cards NATURAL JOIN cards WHERE user_id=${id} ${rQuery};`,
         {type: QueryTypes.SELECT}
     );
     return countCards[0]['COUNT(card_id)'];

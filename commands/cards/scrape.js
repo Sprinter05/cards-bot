@@ -1,7 +1,7 @@
-const { SlashCommandBuilder, DefaultWebSocketManagerOptions } = require("discord.js")
+const { SlashCommandBuilder } = require("discord.js")
 var { checkDupes, checkUser } = require('../../utils/queries.js')
 var { scrapeCard, scrapeCollection, updateMoney } = require('../../utils/manips.js')
-var { rarityRequest } = require('../../utils/functionExporter.js')
+var { cEmoji } = require('../../properties.json')
 
 module.exports = {
     // Define data to export to Discord
@@ -50,19 +50,19 @@ module.exports = {
                 let nMoney = await scrapeCollection(cardsdb, dbId, 1)
                 if (nMoney === -1) return await interaction.reply(`You don't have duplicate Normal cards!`)
                 updateMoney(cardsdb, dbId, nMoney)
-                await interaction.reply(`Scraped duplicate Normal cards for **${nMoney}** <:coin:1214561654629728326>`)
+                await interaction.reply(`Scraped duplicate Normal cards for **${nMoney}** ${cEmoji}`)
                 break;
             case 'rare':
                 let rMoney = await scrapeCollection(cardsdb, dbId, 2)
                 if (rMoney === -1) return await interaction.reply(`You don't have duplicate Rare cards!`)
                 updateMoney(cardsdb, dbId, rMoney)
-                await interaction.reply(`Scraped duplicate Rare cards for **${rMoney}** <:coin:1214561654629728326>`)
+                await interaction.reply(`Scraped duplicate Rare cards for **${rMoney}** ${cEmoji}`)
                 break;
             case 'ultrarare':
                 let urMoney = await scrapeCollection(cardsdb, dbId, 3)
                 if (urMoney === -1) return await interaction.reply(`You don't have duplicate Ultra Rare cards!`)
                 updateMoney(cardsdb, dbId, urMoney)
-                await interaction.reply(`Scraped duplicate Ultra Rare cards for **${urMoney}** <:coin:1214561654629728326>`)
+                await interaction.reply(`Scraped duplicate Ultra Rare cards for **${urMoney}** ${cEmoji}`)
                 break;
             case 'all':
                 let tMoney = 0
@@ -75,13 +75,13 @@ module.exports = {
                 }
                 if (tMoney === 0) return await interaction.reply(`You don't have any duplicate cards!`)
                 updateMoney(cardsdb, dbId, tMoney)
-                await interaction.reply(`Scraped all duplicate cards for **${tMoney}** <:coin:1214561654629728326>`)
+                await interaction.reply(`Scraped all duplicate cards for **${tMoney}** ${cEmoji}`)
                 break;
             default:
                 let dMoney = await scrapeCard(cardsdb, dbId, arg)
                 if (dMoney === -1) return await interaction.reply(`You don't have that card!`)
                 updateMoney(cardsdb, dbId, dMoney)
-                await interaction.reply(`Scraped card **${arg}** for **${dMoney}** <:coin:1214561654629728326>`)
+                await interaction.reply(`Scraped card **${arg}** for **${dMoney}** ${cEmoji}`)
                 break;
         }
     }
