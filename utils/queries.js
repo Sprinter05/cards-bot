@@ -26,7 +26,7 @@ exports.countCards = async function(database, id, rarity){
         );
     } else {
         countCards = await database.query(
-            `SELECT SUM(quantity) AS result FROM user_cards NATURAL JOIN cards WHERE card_rarity_id=${rarity};`,
+            `SELECT SUM(quantity) AS result FROM user_cards NATURAL JOIN cards WHERE card_rarity_id=${rarity} AND user_id=${id};`,
             {type: QueryTypes.SELECT}
         );
     }

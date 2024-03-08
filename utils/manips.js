@@ -9,7 +9,7 @@ exports.randomInt = function(min, max) {
 
 exports.logUser = async function(database, id){
     const insertUser = await database.query(
-        `INSERT INTO users(discord_id) VALUES (${id});`,
+        `INSERT INTO users(discord_id, coins) VALUES (${id}, 100);`,
         {type: QueryTypes.INSERT}
     );
     console.log(`[+] NEW REGISTER userID ${insertUser[0]} discordID ${id}`)

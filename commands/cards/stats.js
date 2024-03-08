@@ -19,7 +19,7 @@ module.exports = {
         const queryId = await checkUser(cardsdb, user.id)
         const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
 
-        const money = await checkMoney(cardsdb, dbId)
+        const money = await checkMoney(cardsdb, dbId) ?? 0
         const nCards = await countCards(cardsdb, dbId, 1) ?? 0
         const rCards = await countCards(cardsdb, dbId, 2) ?? 0
         const urCards = await countCards(cardsdb, dbId, 3) ?? 0
