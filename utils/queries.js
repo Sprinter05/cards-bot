@@ -18,14 +18,19 @@ exports.checkMoney = async function(database, id){
 }
 
 exports.countCards = async function(database, id, rarity){
-    let rQuery
-    if (rarity !== undefined) rQuery = `AND card_rarity_id=${rarity}`
-    else rQuery = ''
-    const countCards = await database.query(
-        `SELECT COUNT(card_id) FROM user_cards NATURAL JOIN cards WHERE user_id=${id} ${rQuery};`,
-        {type: QueryTypes.SELECT}
-    );
-    return countCards[0]['COUNT(card_id)'];
+    var countCards = 0;
+    if (rarity === undefined){
+        countCards = await database.query(
+            `SELECT COUNT(card_id) AS result FROM user_cards NATURAL JOIN cards WHERE user_id=${id};`,
+            {type: QueryTypes.SELECT}
+        );
+    } else {
+        countCards = await database.query(
+            `SELECT SUM(quantity) AS result FROM user_cards NATURAL JOIN cards WHERE card_rarity_id=${rarity};`,
+            {type: QueryTypes.SELECT}
+        );
+    }
+    return countCards[0]['result']
 }
 
 exports.queryCards = async function(database, id, page) {
