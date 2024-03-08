@@ -20,10 +20,10 @@ module.exports = {
         const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
 
         const money = await checkMoney(cardsdb, dbId)
-        const nCards = await countCards(cardsdb, dbId, 1)
-        const rCards = await countCards(cardsdb, dbId, 2)
-        const urCards = await countCards(cardsdb, dbId, 3)
-        const sCards = await countCards(cardsdb, dbId, 4)
+        const nCards = await countCards(cardsdb, dbId, 1) ?? 0
+        const rCards = await countCards(cardsdb, dbId, 2) ?? 0
+        const urCards = await countCards(cardsdb, dbId, 3) ?? 0
+        const sCards = await countCards(cardsdb, dbId, 4) ?? 0
         const speString = sCards === 0 ? '' : `\n${rarEmojis.sCard} Special x${sCards}`
         var cString = `${rarEmojis.nCard} Normal x${nCards}\n${rarEmojis.rCard} Rare x${rCards}\n${rarEmojis.urCard} Ultra Rare x${urCards}${speString}`
 
