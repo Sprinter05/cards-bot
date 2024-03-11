@@ -14,7 +14,7 @@ module.exports = {
             if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
                 currEmbed = interaction.message.embeds[0].data
                 uId = interaction.user.id
-                chkDbId = (await checkUser(db, uId))[0]['user_id']
+                chkDbId = (await checkUser(db, uId))['user_id']
                 dbId = parseInt(currEmbed.footer.text.split(' ╏ ')[1].replace('ID ',''))
                 
                 offset = 0;

@@ -23,20 +23,20 @@ module.exports = {
         }
 
         const queryId = await checkUser(cardsdb, interaction.user.id)
-        const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
+        const dbId = queryId.length === 0 ? -1 : queryId['user_id']
 
-        const cardOwned = await checkCardOwn(cardsdb, dbId, outputCard[0]['card_id'])
-        const cardColor = rarityRequest(outputCard[0]['card_rarity_id'], 'color')
-        const cardIcon = rarityRequest(outputCard[0]['card_rarity_id'], 'iconURL')
+        const cardOwned = await checkCardOwn(cardsdb, dbId, outputCard['card_id'])
+        const cardColor = rarityRequest(outputCard['card_rarity_id'], 'color')
+        const cardIcon = rarityRequest(outputCard['card_rarity_id'], 'iconURL')
         var footerText = ""
         if (cardOwned === true){footerText="You own this card"}
         else {footerText="You don't own this card"}
         
         var embed = new EmbedBuilder()
-            .setTitle(`__${outputCard[0]['card_name']}__`)
-            .setImage(outputCard[0]['card_img_url'])
+            .setTitle(`__${outputCard['card_name']}__`)
+            .setImage(outputCard['card_img_url'])
             .setColor(cardColor)
-            .setFooter({ text: `ID: ${outputCard[0]['card_id']}  |  ${footerText}` , iconURL: cardIcon})
+            .setFooter({ text: `ID: ${outputCard['card_id']}  |  ${footerText}` , iconURL: cardIcon})
         await interaction.reply({
             embeds: [embed],
         })

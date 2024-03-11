@@ -17,7 +17,7 @@ module.exports = {
     async execute(interaction, cardsdb){
         const user = interaction.options.getUser('user') ?? interaction.user;
         const queryId = await checkUser(cardsdb, user.id)
-        const dbId = queryId.length === 0 ? -1 : queryId[0]['user_id']
+        const dbId = queryId.length === 0 ? -1 : queryId['user_id']
 
         const money = await checkMoney(cardsdb, dbId) ?? 0
         const nCards = await countCards(cardsdb, dbId, 1) ?? 0
