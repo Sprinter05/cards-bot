@@ -30,7 +30,7 @@ exports.countCards = async function(database, id, rarity){
             {replacements: [rarity, id], type: QueryTypes.SELECT, plain: true}
         );
     }
-    return countCards['result']
+    return countCards['result'];
 }
 
 exports.queryCards = async function(database, id, page) {
