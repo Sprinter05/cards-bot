@@ -3,41 +3,41 @@ const { entries } = require('../properties.json')
 
 exports.checkUser = async function(database, discordId){
     const userExist = await database.query(
-        `SELECT user_id FROM users WHERE discord_id=${discordId};`,
-        {type: QueryTypes.SELECT}
+        `SELECT user_id FROM users WHERE discord_id = ?;`,
+        {replacements: [discordId], type: QueryTypes.SELECT, plain: true}
     );
     return userExist
 }
 
 exports.checkMoney = async function(database, id){
     const money = await database.query(
-        `SELECT coins FROM users WHERE user_id=${id}`,
-        {type: QueryTypes.SELECT}
+        `SELECT coins FROM users WHERE user_id = ?`,
+        {replacements: [id], type: QueryTypes.SELECT, plain: true}
     )
-    return money[0]['coins']
+    return money['coins']
 }
 
 exports.countCards = async function(database, id, rarity){
     var countCards = 0;
     if (rarity === undefined){
         countCards = await database.query(
-            `SELECT COUNT(card_id) AS result FROM user_cards NATURAL JOIN cards WHERE user_id=${id};`,
-            {type: QueryTypes.SELECT}
+            `SELECT COUNT(card_id) AS result FROM user_cards NATURAL JOIN cards WHERE user_id = ?;`,
+            {replacements: [id], type: QueryTypes.SELECT, plain: true}
         );
     } else {
         countCards = await database.query(
-            `SELECT SUM(quantity) AS result FROM user_cards NATURAL JOIN cards WHERE card_rarity_id=${rarity} AND user_id=${id};`,
-            {type: QueryTypes.SELECT}
+            `SELECT SUM(quantity) AS result FROM user_cards NATURAL JOIN cards WHERE card_rarity_id = ? AND user_id = ?;`,
+            {replacements: [rarity, id], type: QueryTypes.SELECT, plain: true}
         );
     }
-    return countCards[0]['result']
+    return countCards['result']
 }
 
 exports.queryCards = async function(database, id, page) {
     const offset = (page-1)*entries
     const userCards = await database.query(
-        `SELECT card_name, card_rarity_id, quantity FROM user_cards NATURAL JOIN cards WHERE user_id=${id} LIMIT ${entries} OFFSET ${offset};`,
-        {type: QueryTypes.SELECT}
+        `SELECT card_name, card_rarity_id, quantity FROM user_cards NATURAL JOIN cards WHERE user_id = ? LIMIT ? OFFSET ?;`,
+        {replacements: [id, entries, offset], type: QueryTypes.SELECT}
     );
     var outputJson = {};
     for(var i = 0; i < userCards.length; i++){
@@ -51,8 +51,8 @@ exports.queryCards = async function(database, id, page) {
 
 exports.checkDupes = async function(database, id) {
     const userDupes = await database.query(
-        `SELECT quantity FROM user_cards WHERE user_id=${id};`,
-        {type: QueryTypes.SELECT}
+        `SELECT quantity FROM user_cards WHERE user_id = ?;`,
+        {replacements: [id], type: QueryTypes.SELECT}
     );
     for(var i = 0; i < userDupes.length; i++){
         if (userDupes[i]['quantity'] > 1) return true;
@@ -62,34 +62,34 @@ exports.checkDupes = async function(database, id) {
 
 exports.getCardData = async function(database, card){
     const cardInfo = await database.query(
-        `SELECT card_id, card_name, card_rarity_id, card_img_url FROM cards WHERE card_name="${card}";`,
-        {type: QueryTypes.SELECT}
+        `SELECT card_id, card_name, card_rarity_id, card_img_url FROM cards WHERE card_name = ?;`,
+        {replacements: [card], type: QueryTypes.SELECT, plain: true}
     )
     return cardInfo;
 }
 
 exports.checkCardOwn = async function(database, id, cardId){
     const ownCheck = await database.query(
-        `SELECT card_id FROM user_cards WHERE card_id="${cardId}" AND user_id=${id};`,
-        {type: QueryTypes.SELECT}
+        `SELECT card_id FROM user_cards WHERE card_id = ? AND user_id = ?;`,
+        {replacements: [cardId, id], type: QueryTypes.SELECT, plain: true}
     )
-    if (ownCheck.length === 0){
+    if (ownCheck === null){
         return false
     } else {return true}
 }
 
 exports.countPacks = async function(database, id){
     const countPacks = await database.query(
-        `SELECT COUNT(pack_id) FROM user_packs WHERE user_id=${id};`,
-        {type: QueryTypes.SELECT}
+        `SELECT SUM(quantity) AS result FROM user_packs WHERE user_id = ?;`,
+        {replacements: [id], type: QueryTypes.SELECT, plain: true}
     );
-    return countPacks[0]['COUNT(pack_id)'];
+    return countPacks['result'];
 }
 
 exports.queryPacks = async function(database, id){
     const userPacks = await database.query(
-        `SELECT pack_name, quantity FROM user_packs NATURAL JOIN packs WHERE user_id=${id};`,
-        {type: QueryTypes.SELECT}
+        `SELECT pack_name, quantity FROM user_packs NATURAL JOIN packs WHERE user_id = ?;`,
+        {replacements: [id], type: QueryTypes.SELECT}
     );
     var outputJson = {};
     for(var i = 0; i < userPacks.length; i++){
