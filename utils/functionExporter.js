@@ -97,7 +97,7 @@ exports.rarityRequest = function(rarity, request){
                     retValue = rarIcons.nCard
                     break;
                 default:
-                    retValue = ''
+                    retValue = 'Normal'
                     break;
             }
             break;
@@ -113,7 +113,7 @@ exports.rarityRequest = function(rarity, request){
                     retValue = rarIcons.rCard
                     break;
                 default:
-                    retValue = ''
+                    retValue = 'Rare'
                     break;
             }
             break;
@@ -129,7 +129,7 @@ exports.rarityRequest = function(rarity, request){
                     retValue = rarIcons.urCard
                     break;
                 default:
-                    retValue = ''
+                    retValue = 'Ultra Rare'
                     break;
             }
             break;
@@ -145,7 +145,7 @@ exports.rarityRequest = function(rarity, request){
                     retValue = rarIcons.sCard
                     break;
                 default:
-                    retValue = ''
+                    retValue = 'Special'
                     break;
             }
             break;

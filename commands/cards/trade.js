@@ -1,6 +1,6 @@
-const { SlashCommandBuilder } = require("discord.js")
-var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/functionExporter.js')
-var { countCards, checkUser, getCardData } = require('../../utils/queries.js')
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
+var { rarityRequest } = require('../../utils/functionExporter.js')
+var { countCards, checkUser, getCardData, checkCardOwn } = require('../../utils/queries.js')
 
 module.exports = {
     // Define data to export to Discord
@@ -18,30 +18,58 @@ module.exports = {
             .setName('card')
             .setDescription('Card to trade.')
             .setRequired(true)
-        ),
+        )
+        .addStringOption(option =>
+            option
+              .setName('request')
+              .setDescription('Request a card')
+              .setRequired(false)
+          ),
     // Main function
     async execute(interaction, cardsdb){
         const userToTrade = interaction.options.getUser('user');
         const user = interaction.user;
         const userQueryId = await checkUser(cardsdb, user.id)
         const userTTQueryId = await checkUser(cardsdb, userToTrade.id)
-        const dbId = userQueryId === null ? -1 : queryId['user_id']
-        const dbTTId = userTTQueryId === null ? -1 : queryId['user_id']
-        var cardTTOne = interaction.options.getInteger('card');
+        const dbId = userQueryId === null ? -1 : userQueryId['user_id']
+        const dbTTId = userTTQueryId === null ? -1 : userTTQueryId['user_id']
+
+        var cardTTOne = interaction.options.getString('card');
         const queryCard = await getCardData(cardsdb, cardTTOne)
+        var cardReq = interaction.options.getString('request')
+        const queryRCard = cardReq !== null ? await getCardData(cardsdb, cardReq) : 0
 
         if ((await countCards(cardsdb, dbId)) <= 0 ) return await interaction.reply("You don't have any cards!");
         else if ((await countCards(cardsdb, dbTTId)) <= 0) return await interaction.reply(`${userToTrade.username} doesn't have any cards!`);
 
+        if (queryCard === null) return await interaction.reply("The card to trade does not exist!")
+        if (queryRCard === null) return await interaction.reply("The card requested does not exist!")
+
+        const cardOwned = await checkCardOwn(cardsdb, dbId, queryCard['card_id'])
+        const cardROwned = cardReq !== null ? await checkCardOwn(cardsdb, dbTTId, queryRCard['card_id']) : 0
+
+        if (cardOwned === false) return await interaction.reply("You don't have that card!")
+        if (cardROwned === false) return await interaction.reply(`${userToTrade.username} doesn't have the requested card!`)
+
+        const rarEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
+        const rarREmoji = rarityRequest(queryRCard['card_rarity_id'], 'emoji')
+
+        const reqStr = cardReq === null ? 'None' : `${rarREmoji} ${cardReq}`
+
         var embed = new EmbedBuilder()
-        .setTitle(`${user.username} wants to trade the card "${queryCard[0]['card_name']}"`)
+        .setTitle(`Trading requested to ${userToTrade.username}!`)
+        .setAuthor({ name: `${user.username} wants to trade!`, iconURL: user.avatarURL()})
+        .addFields(
+            { name: 'Card:', value: `${rarEmoji} ${queryCard['card_name']}` },
+            { name: 'Requests:', value: `${reqStr}` }
+        )
         .setImage(queryCard['card_img_url'])
-        .setColor(cardColor)
-        .setFooter({ text: `ID: ${outputCard['card_id']}  |  ${footerText}` , iconURL: cardIcon})
+        .setColor("#18E6E6")
+        .setFooter({ text: `You have 1 minute to accept!` , iconURL: userToTrade.avatarURL()})
 
         await interaction.reply({
             embeds: [embed],
-            components: [row],
+            //components: [row],
         })
     }
 }
