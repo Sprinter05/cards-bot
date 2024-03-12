@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionCollector  } = require("discord.js")
 var { rarityRequest } = require('../../utils/functionExporter.js')
 var { countCards, checkUser, getCardData, checkCardOwn } = require('../../utils/queries.js')
+const waitTime = require('node:timers/promises').setTimeout;
 
 module.exports = {
     // Define data to export to Discord
@@ -67,9 +68,31 @@ module.exports = {
         .setColor("#18E6E6")
         .setFooter({ text: `You have 1 minute to accept!` , iconURL: userToTrade.avatarURL()})
 
-        await interaction.reply({
+        const acceptBton = new ButtonBuilder()
+			.setCustomId('accept')
+			.setLabel('Accept')
+			.setStyle(ButtonStyle.Success);
+		const denyBton = new ButtonBuilder()
+			.setCustomId('deny')
+			.setLabel('Deny')
+			.setStyle(ButtonStyle.Danger);
+        const row = new ActionRowBuilder()
+			.addComponents(acceptBton, denyBton);
+        
+        const tradeResp = await interaction.reply({
             embeds: [embed],
-            //components: [row],
+            components: [row],
+            fetchReply: true
         })
+
+        await tradeResp.awaitMessageComponent({ time: 60_000 }).catch(async (error) => {
+            row.components[0].setDisabled(true)
+            row.components[1].setDisabled(true)
+            embed.setFooter({ text: `Trade expired!` , iconURL: userToTrade.avatarURL()})
+            await interaction.editReply({
+                embeds: [embed],
+                components: [row],
+            })
+        });  
     }
 }
