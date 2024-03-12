@@ -3,24 +3,41 @@ const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { checkUser } = require('./utils/queries')
 const { logUser } = require('./utils/manips')
 
+// npm packages
+const fs = require('fs');
+
+// Get date and time
+const currentDate = new Date();
+const cDay = currentDate.getDate();
+const cMonth = currentDate.getMonth();
+const cYear = currentDate.getFullYear();
+const cHour = currentDate.getHours();
+const cMinutes = currentDate.getMinutes();
+const dateString = `${cDay}-${cMonth+1}-${cYear} at ${cHour}:${cMinutes}`;
+
 // Database
 const Sequelize = require('sequelize');
 const { database } = require("./config.json")
+const seqLog = fs.createWriteStream('./logs/sql.log', {'flags': 'a'});
+seqLog.write(`[LOG] Starting in ${dateString}\n`)
 const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd, {
     host: database.ip,
     dialect: 'mysql',
-    logging: false,
+    logging: (msg) => {
+		const cmdTime = new Date();
+		const cmdHrs = ('0' + cmdTime.getHours()).slice(-2)
+		const cmdMins = ('0' + cmdTime.getMinutes()).slice(-2)
+		const cmdSecs = ('0' + cmdTime.getSeconds()).slice(-2)
+		seqLog.write(`[>] ${msg} [${cmdHrs}:${cmdMins}:${cmdSecs}]\n`)
+	}
 })
 
 // Login into database
 cardsdb.authenticate().then(() => {
     console.log('Connection has been established successfully.');
- }).catch((error) => {
+}).catch((error) => {
     console.error('Unable to connect to the database: ', error);
- });
-
-// npm packages
-const fs = require('fs');
+});
 
 // Setup client and config
 const client = new Client({ intents: [GatewayIntentBits.Guilds]});

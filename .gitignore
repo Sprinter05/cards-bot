@@ -3,3 +3,4 @@ package-lock.json
 *.bat
 *.txt
 node_modules/
+logs/
