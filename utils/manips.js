@@ -12,7 +12,6 @@ exports.logUser = async function(database, id){
         `INSERT INTO users(discord_id, coins) VALUES (?, 100);`,
         {replacements: [id], type: QueryTypes.INSERT}
     );
-    console.log(`[+] NEW REGISTER userID ${insertUser[0]} discordID ${id}`)
     return insertUser;
 }
 

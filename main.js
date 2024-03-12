@@ -7,13 +7,14 @@ const { logUser } = require('./utils/manips')
 const fs = require('fs');
 
 // Get date and time
-const currentDate = new Date();
-const cDay = currentDate.getDate();
-const cMonth = currentDate.getMonth();
-const cYear = currentDate.getFullYear();
-const cHour = currentDate.getHours();
-const cMinutes = currentDate.getMinutes();
-const dateString = `${cDay}-${cMonth+1}-${cYear} at ${cHour}:${cMinutes}`;
+const currDate = new Date();
+const cDay = ('0' + currDate.getDate()).slice(-2);
+const cMonth = ('0' + (currDate.getMonth() + 1)).slice(-2)
+const cYear = currDate.getFullYear();
+const cHour = ('0' + currDate.getHours()).slice(-2)
+const cMinutes = ('0' + currDate.getMinutes()).slice(-2)
+const cSeconds = ('0' + currDate.getSeconds()).slice(-2)
+const dateString = `${cDay}-${cMonth}-${cYear} at ${cHour}:${cMinutes}:${cSeconds}`;
 
 // Database
 const Sequelize = require('sequelize');
@@ -28,7 +29,7 @@ const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd,
 		const cmdHrs = ('0' + cmdTime.getHours()).slice(-2)
 		const cmdMins = ('0' + cmdTime.getMinutes()).slice(-2)
 		const cmdSecs = ('0' + cmdTime.getSeconds()).slice(-2)
-		seqLog.write(`[>] ${msg} [${cmdHrs}:${cmdMins}:${cmdSecs}]\n`)
+		seqLog.write(`\t> ${msg} [${cmdHrs}:${cmdMins}:${cmdSecs}]\n`)
 	}
 })
 
