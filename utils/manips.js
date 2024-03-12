@@ -9,8 +9,8 @@ exports.randomInt = function(min, max) {
 
 exports.logUser = async function(database, id){
     const insertUser = await database.query(
-        `INSERT INTO users(discord_id, coins) VALUES (${id}, 100);`,
-        {type: QueryTypes.INSERT}
+        `INSERT INTO users(discord_id, coins) VALUES (?, 100);`,
+        {replacements: [id], type: QueryTypes.INSERT}
     );
     console.log(`[+] NEW REGISTER userID ${insertUser[0]} discordID ${id}`)
     return insertUser;
@@ -18,21 +18,21 @@ exports.logUser = async function(database, id){
 
 exports.scrapeCard = async function(database, id, card){
     const qQuery = await database.query(
-        `SELECT quantity, card_rarity_id FROM user_cards NATURAL JOIN cards WHERE card_name='${card}' AND user_id=${id};`,
-        {type: QueryTypes.SELECT}
+        `SELECT quantity, card_rarity_id FROM user_cards NATURAL JOIN cards WHERE card_name = ? AND user_id = ?;`,
+        {replacements: [card, id], type: QueryTypes.SELECT, plain: true}
     );
-    if(qQuery.length === 0) return -1
-    const rarity = qQuery[0]['card_rarity_id']
-    const quantity = qQuery[0]['quantity']
+    if(qQuery === null) return -1
+    const rarity = qQuery['card_rarity_id']
+    const quantity = qQuery['quantity']
     if (quantity === 1){
         await database.query(
-            `DELETE FROM user_cards WHERE user_id=${id} AND card_id=(SELECT card_id FROM cards WHERE card_name='${card}');`,
-            {type: QueryTypes.DELETE}
+            `DELETE FROM user_cards WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
+            {replacements: [id, card], type: QueryTypes.DELETE}
         );
     } else {
         await database.query(
-            `UPDATE user_cards SET quantity=quantity-1 WHERE user_id=${id} AND card_id=(SELECT card_id FROM cards WHERE card_name='${card}');`,
-            {type: QueryTypes.UPDATE}
+            `UPDATE user_cards SET quantity=quantity-1 WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
+            {replacements: [id, card], type: QueryTypes.UPDATE}
         );
     }
     const scrapeMoney = exports.randomInt(scrapes[`${rarity}`].min, scrapes[`${rarity}`].max)
@@ -41,8 +41,8 @@ exports.scrapeCard = async function(database, id, card){
 
 exports.scrapeCollection = async function(database, id, rarity){
     const nQuery = await database.query(
-        `SELECT card_name, quantity FROM user_cards NATURAL JOIN cards WHERE card_rarity_id=${rarity} AND user_id=${id} AND quantity>1;`,
-        {type: QueryTypes.SELECT}
+        `SELECT card_name, quantity FROM user_cards NATURAL JOIN cards WHERE card_rarity_id = ? AND user_id = ? AND quantity>1;`,
+        {replacements: [rarity, id], type: QueryTypes.SELECT}
     )
     if (nQuery.length === 0) return -1
     var totalMoney = 0
@@ -56,8 +56,8 @@ exports.scrapeCollection = async function(database, id, rarity){
 
 exports.updateMoney = async function(database, id, mon){
     const moreMon = await database.query(
-        `UPDATE users SET coins=coins+${mon} WHERE user_id=${id};`,
-        {type: QueryTypes.UPDATE}
+        `UPDATE users SET coins=coins + ? WHERE user_id = ?;`,
+        {replacements: [mon, id], type: QueryTypes.UPDATE}
     )
     return moreMon;
 }
