@@ -17,13 +17,13 @@ module.exports = {
     async execute(interaction, cardsdb){
         const cardName = interaction.options.getString('card');
         const outputCard = await getCardData(cardsdb, cardName)
-        if (outputCard.length === 0){
+        if (outputCard === null){
             await interaction.reply("This card could not be found!")
             return;
         }
 
         const queryId = await checkUser(cardsdb, interaction.user.id)
-        const dbId = queryId.length === 0 ? -1 : queryId['user_id']
+        const dbId = queryId === null ? -1 : queryId['user_id']
 
         const cardOwned = await checkCardOwn(cardsdb, dbId, outputCard['card_id'])
         const cardColor = rarityRequest(outputCard['card_rarity_id'], 'color')

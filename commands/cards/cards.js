@@ -24,7 +24,7 @@ module.exports = {
     async execute(interaction, cardsdb){
         const user = interaction.options.getUser('user') ?? interaction.user;
         const queryId = await checkUser(cardsdb, user.id)
-        const dbId = queryId.length === 0 ? -1 : queryId['user_id']
+        const dbId = queryId === null ? -1 : queryId['user_id']
         var page = interaction.options.getInteger('page') ?? 1;
 
         if ((await countCards(cardsdb, dbId)) <= 0){

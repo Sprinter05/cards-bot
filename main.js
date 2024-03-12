@@ -53,7 +53,7 @@ client.on(Events.InteractionCreate, async interaction => {
 	const cardCmds = fs.readdirSync(path.join(__dirname, 'commands/cards'))
     try {
 		// Check if command is cards related and if user is in the users database 
-		if (cardCmds.includes(interaction.commandName.concat('.js')) && (await checkUser(cardsdb, interaction.user.id)).length === 0 ){
+		if (cardCmds.includes(interaction.commandName.concat('.js')) && (await checkUser(cardsdb, interaction.user.id)) === null ){
 			logUser(cardsdb, interaction.user.id)
 		}
         await command.execute(interaction, cardsdb);

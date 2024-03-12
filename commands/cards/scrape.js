@@ -39,7 +39,7 @@ module.exports = {
     // Main function
     async execute(interaction, cardsdb){
         const queryId = await checkUser(cardsdb, interaction.user.id)
-        const dbId = queryId.length === 0 ? -1 : queryId['user_id']
+        const dbId = queryId === null ? -1 : queryId['user_id']
         if (await checkDupes(cardsdb, dbId) === false && interaction.options.getSubcommand() === 'collection') return await interaction.reply("You have no duplicate cards!")
         
         var arg = ''

@@ -17,7 +17,7 @@ module.exports = {
     async execute(interaction, cardsdb){
         const user = interaction.options.getUser('user') ?? interaction.user;
         const queryId = await checkUser(cardsdb, user.id)
-        const dbId = queryId.length === 0 ? -1 : queryId['user_id']
+        const dbId = queryId === null ? -1 : queryId['user_id']
 
         const pCount = await countPacks(cardsdb, dbId) ?? 0
         if (pCount <= 0){
