@@ -68,6 +68,14 @@ exports.getCardData = async function(database, card){
     return cardInfo;
 }
 
+exports.getAllCards = async function(database, id){
+    const cards = await database.query(
+        `SELECT card_name FROM user_cards NATURAL JOIN cards WHERE user_id = ?`,
+        {replacements: [id], type: QueryTypes.SELECT}
+    )
+    return cards;
+}
+
 exports.checkCardOwn = async function(database, id, cardId){
     const ownCheck = await database.query(
         `SELECT card_id FROM user_cards WHERE card_id = ? AND user_id = ?;`,
