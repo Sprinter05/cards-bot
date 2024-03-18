@@ -1,7 +1,6 @@
-const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder } = require('discord.js');
-var { checkUser, getAllCards } = require('../queries')
-var { cardEmbed, cardsMaxPage, cardRow } = require('../functionExporter')
-const { rarEmojis } = require('../../properties.json')
+const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+var { checkUser, getAllCards, getCardData } = require('../queries')
+var { cardEmbed, cardsMaxPage, cardRow, rarityRequest } = require('../functionExporter')
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -38,11 +37,13 @@ module.exports = {
                     components: [newRow],
                 })
             } else if(interaction.customId === 'acceptTrade'){
+
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
                 reqDbId = (await checkUser(db, reqId))['user_id']
                 sentDbId = (await checkUser(db, sentId))['user_id']
-                if (interaction.user.id === sentId) {
+
+                if (interaction.user.id !== reqId) {
                     await interaction.reply({ content: "You cannot accept your own trade request!", ephemeral: true });
                     return;
                 }
@@ -62,11 +63,16 @@ module.exports = {
 			        .addComponents(cardSelect);
 
                 var embed = interaction.message.embeds[0].data
-                embed.title = `Choose a card!`
-                embed.color = parseInt('277F4A', 16)
+                var newEmbed = new EmbedBuilder()
+                    .setTitle(`Choose a card ${interaction.user.username}!`)
+                    .setColor('277F4A')
+                    .setDescription(`Trading for ${embed.fields[0].value}`)
+                    .setFooter({ text: `Trade accepted!` , iconURL: interaction.user.avatarURL()})
+                    .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
+                    .setImage(embed.image.url)
 
                 await interaction.update({
-                    embeds: [embed],
+                    embeds: [newEmbed],
                     components: [row],
                 });
 
@@ -75,11 +81,44 @@ module.exports = {
             }
         } else if (interaction.isStringSelectMenu()){
             if(interaction.customId === 'cardChoose'){
+
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 if (interaction.user.id !== reqId){
                     await interaction.reply({ content: "You cannot interact with a trade that is not directed to you!", ephemeral: true });
                     return;
                 }
+                
+                const queryCard = await getCardData(db, interaction.values[0])
+                var embed = interaction.message.embeds[0].data
+                const ogCard = embed.description.split(" ")[3]
+                const ogCardEmoji = embed.description.split(" ")[2]
+                const tradeCardEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
+
+                var newEmbed = new EmbedBuilder()
+                    .setTitle(`Confirm the trade ${embed.author.name.split(" ")[0]}!`)
+                    .setDescription(`${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${interaction.values[0]}`)
+                    .setColor("#18E6E6")
+                    .setFooter({ text: `Trade accepted!` , iconURL: interaction.user.avatarURL()})
+                    .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
+                    .setImage(queryCard['card_img_url'])
+                    .setThumbnail(embed.image.url)
+
+                const confirmBton = new ButtonBuilder()
+                    .setCustomId('confirmTrade')
+                    .setLabel('Confirm')
+                    .setStyle(ButtonStyle.Success);
+                const cancelBton = new ButtonBuilder()
+                    .setCustomId('cancelTrade')
+                    .setLabel('Cancel')
+                    .setStyle(ButtonStyle.Danger);
+                const newRow = new ActionRowBuilder()
+                    .addComponents(confirmBton, cancelBton);
+
+                interaction.update({
+                    embeds: [newEmbed],
+                    components: [newRow],
+                })
+
             }
         } else {
             return
