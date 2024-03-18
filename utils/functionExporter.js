@@ -30,7 +30,7 @@ exports.cardRow = async function(page, maxPage){
     return row;
 }
 
-exports.cardEmbed = async function(db, dbId, titleUser, page){
+exports.cardEmbed = async function(db, dbId, titleUser, userIcon, page){
     maxPage = await exports.cardsMaxPage(db, dbId, entries)
     if (page > maxPage){page = maxPage}
     var outputQuery = await queryCards(db, dbId, page)
@@ -46,7 +46,7 @@ exports.cardEmbed = async function(db, dbId, titleUser, page){
         .setTitle(title)
         .setDescription(outputStr)
         .setColor('#18E6E6')
-        .setFooter({ text: `Page ${page} ╏ ID ${dbId}` })
+        .setFooter({ text: `Page ${page}`, iconURL: userIcon})
     return embed;
 }
 

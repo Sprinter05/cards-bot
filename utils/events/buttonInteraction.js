@@ -7,6 +7,7 @@ module.exports = {
 	async execute(interaction, db) {
 	    if (interaction.isButton()) {
             if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
+
                 if (interaction.user.id !== interaction.message.interaction.user.id){
                     await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
                     return;
@@ -15,17 +16,18 @@ module.exports = {
                 currEmbed = interaction.message.embeds[0].data
                 uId = interaction.user.id
                 chkDbId = (await checkUser(db, uId))['user_id']
-                dbId = parseInt(currEmbed.footer.text.split(' ╏ ')[1].replace('ID ',''))
+                userId = currEmbed.footer.icon_url.split("/")[4]
+                dbId = (await checkUser(db, userId))['user_id']
                 
                 offset = 0;
                 if(interaction.customId === 'cardNext'){offset = 1}
                 else if(interaction.customId === 'cardPrev'){offset = -1}
 
                 const msgTitle = dbId === chkDbId ? 0 : currEmbed.title.replace('These are ', '').replace(`'s cards:`, '')
-                page = parseInt(currEmbed.footer.text.split(' ╏ ')[0].replace('Page ',''))+offset
+                page = parseInt(currEmbed.footer.text.replace('Page ',''))+offset
                 maxPage = await cardsMaxPage(db, dbId)
                 
-                newEmbed = await cardEmbed(db, dbId, msgTitle, page)
+                newEmbed = await cardEmbed(db, dbId, msgTitle, currEmbed.footer.icon_url, page)
                 newRow = await cardRow(page, maxPage)
 
                 // MariaDB moment
@@ -36,6 +38,7 @@ module.exports = {
                     embeds: [newEmbed],
                     components: [newRow],
                 })
+
             } else if(interaction.customId === 'acceptTrade'){
 
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
