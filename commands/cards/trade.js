@@ -69,11 +69,11 @@ module.exports = {
         .setFooter({ text: `You have 1 minute to accept!` , iconURL: userToTrade.avatarURL()})
 
         const acceptBton = new ButtonBuilder()
-			.setCustomId('accept')
+			.setCustomId('acceptTrade')
 			.setLabel('Accept')
 			.setStyle(ButtonStyle.Success);
 		const denyBton = new ButtonBuilder()
-			.setCustomId('deny')
+			.setCustomId('denyTrade')
 			.setLabel('Deny')
 			.setStyle(ButtonStyle.Danger);
         const row = new ActionRowBuilder()

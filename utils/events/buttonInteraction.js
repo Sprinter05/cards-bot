@@ -7,11 +7,12 @@ module.exports = {
 	async execute(interaction, db) {
         if (!interaction.isButton()) return;
 	    else if (interaction.isButton()) {
-            if (interaction.user.id !== interaction.message.interaction.user.id){
-                await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
-                return;
-            }
             if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
+                if (interaction.user.id !== interaction.message.interaction.user.id){
+                    await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
+                    return;
+                }
+
                 currEmbed = interaction.message.embeds[0].data
                 uId = interaction.user.id
                 chkDbId = (await checkUser(db, uId))['user_id']
@@ -36,6 +37,10 @@ module.exports = {
                     embeds: [newEmbed],
                     components: [newRow],
                 })
+            } else if(interaction.customId === 'acceptTrade'){
+
+            } else if(interaction.customId === 'denyTrade'){
+                
             }
         }
     }
