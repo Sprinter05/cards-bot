@@ -1,5 +1,6 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 var { checkUser, getAllCards, getCardData } = require('../queries')
+var { tradeCards } = require('../manips')
 var { cardEmbed, cardsMaxPage, cardRow, rarityRequest } = require('../functionExporter')
 
 module.exports = {
@@ -41,14 +42,13 @@ module.exports = {
             } else if(interaction.customId === 'acceptTrade'){
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
-                reqDbId = (await checkUser(db, reqId))['user_id']
-                sentDbId = (await checkUser(db, sentId))['user_id']
-
                 if (interaction.user.id !== reqId) {
                     await interaction.reply({ content: "You cannot accept your own trade request!", ephemeral: true });
                     return;
                 }
 
+                reqDbId = (await checkUser(db, reqId))['user_id']
+                sentDbId = (await checkUser(db, sentId))['user_id']
                 cardJSON = await getAllCards(db, reqDbId)
                 const cardSelect = new StringSelectMenuBuilder()
 			        .setCustomId('cardChoose')
@@ -83,7 +83,27 @@ module.exports = {
                     components: [row, btonRow],
                 });
             } else if(interaction.customId === 'confirmTrade'){
+                embed = interaction.message.embeds[0].data
+                reqId = embed.footer.icon_url.split("/")[4]
+                sentId = embed.author.icon_url.split("/")[4]
+                if (interaction.user.id !== sentId) {
+                    await interaction.reply({ content: "You are not the user that has to confirm this trade!", ephemeral: true });
+                    return;
+                }
+
+                dbOne = (await checkUser(db, sentId))['user_id']
+                dbTwo = (await checkUser(db, reqId))['user_id']
+                cards = embed.description.split(" ⇔ ")
+                cardOne = cards[0].replace(cards[0].split(" ")[0], '').replace(" ", '')
+                cardTwo = cards[1].replace(cards[1].split(" ")[0], '').replace(" ", '')
+                tradeCards(db, dbOne, dbTwo, cardOne, cardTwo)
                 
+                embed.footer.text = `Trade completed!`
+                await interaction.update({
+                    embeds: [embed],
+                    components: []
+                })
+                await interaction.followUp("Trade has been completed, please check that you both have the corresponding cards!")
             } else if(interaction.customId === 'denyTrade'){
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
@@ -111,8 +131,9 @@ module.exports = {
                 
                 const queryCard = await getCardData(db, interaction.values[0])
                 var embed = interaction.message.embeds[0].data
-                const ogCard = embed.description.split(" ")[3]
-                const ogCardEmoji = embed.description.split(" ")[2]
+                const cardStr = embed.description.replace("Trading for ", '')
+                const ogCard = cardStr.replace(cardStr.split(" ")[0], '').replace(" ", '')
+                const ogCardEmoji = cardStr.split(" ")[0]
                 const tradeCardEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
 
                 var newEmbed = new EmbedBuilder()
