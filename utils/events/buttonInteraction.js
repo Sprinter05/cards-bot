@@ -7,7 +7,6 @@ module.exports = {
 	async execute(interaction, db) {
 	    if (interaction.isButton()) {
             if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
-
                 if (interaction.user.id !== interaction.message.interaction.user.id){
                     await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
                     return;
@@ -40,7 +39,6 @@ module.exports = {
                 })
 
             } else if(interaction.customId === 'acceptTrade'){
-
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
                 reqDbId = (await checkUser(db, reqId))['user_id']
@@ -62,8 +60,14 @@ module.exports = {
                             .setValue(cardJSON[i]['card_name']),
                     )
                 }
+                const cancelBton = new ButtonBuilder()
+                    .setCustomId('denyTrade')
+                    .setLabel('Cancel')
+                    .setStyle(ButtonStyle.Danger);
                 const row = new ActionRowBuilder()
 			        .addComponents(cardSelect);
+                const btonRow = new ActionRowBuilder()
+			        .addComponents(cancelBton);
 
                 var embed = interaction.message.embeds[0].data
                 var newEmbed = new EmbedBuilder()
@@ -76,15 +80,29 @@ module.exports = {
 
                 await interaction.update({
                     embeds: [newEmbed],
-                    components: [row],
+                    components: [row, btonRow],
                 });
-
-            } else if(interaction.customId === 'denyTrade'){
+            } else if(interaction.customId === 'confirmTrade'){
                 
+            } else if(interaction.customId === 'denyTrade'){
+                reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
+                sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
+                var embed = interaction.message.embeds[0].data
+                embed.footer.text = `Trade cancelled by ${interaction.user.username}`
+
+                if (interaction.user.id !== reqId && interaction.user.id !== sentId) {
+                    await interaction.reply({ content: "You cannot cancel a trade that you are not part of!", ephemeral: true });
+                    return;
+                }
+
+                await interaction.update({
+                    embeds: [embed],
+                    components: []
+                })
+                await interaction.followUp("Trade has been cancelled!")
             }
         } else if (interaction.isStringSelectMenu()){
             if(interaction.customId === 'cardChoose'){
-
                 reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 if (interaction.user.id !== reqId){
                     await interaction.reply({ content: "You cannot interact with a trade that is not directed to you!", ephemeral: true });
@@ -101,7 +119,7 @@ module.exports = {
                     .setTitle(`Confirm the trade ${embed.author.name.split(" ")[0]}!`)
                     .setDescription(`${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${interaction.values[0]}`)
                     .setColor("#18E6E6")
-                    .setFooter({ text: `Trade accepted!` , iconURL: interaction.user.avatarURL()})
+                    .setFooter({ text: `Trade accepted!`, iconURL: interaction.user.avatarURL()})
                     .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
                     .setImage(queryCard['card_img_url'])
                     .setThumbnail(embed.image.url)
@@ -111,7 +129,7 @@ module.exports = {
                     .setLabel('Confirm')
                     .setStyle(ButtonStyle.Success);
                 const cancelBton = new ButtonBuilder()
-                    .setCustomId('cancelTrade')
+                    .setCustomId('denyTrade')
                     .setLabel('Cancel')
                     .setStyle(ButtonStyle.Danger);
                 const newRow = new ActionRowBuilder()
@@ -121,7 +139,6 @@ module.exports = {
                     embeds: [newEmbed],
                     components: [newRow],
                 })
-
             }
         } else {
             return

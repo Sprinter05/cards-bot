@@ -65,7 +65,7 @@ module.exports = {
         )
         .setImage(queryCard['card_img_url'])
         .setColor("#18E6E6")
-        .setFooter({ text: `You have 1 minute to accept!` , iconURL: userToTrade.avatarURL()})
+        .setFooter({ text: `You have 2 minutes to accept!` , iconURL: userToTrade.avatarURL()})
 
         const acceptBton = new ButtonBuilder()
 			.setCustomId('acceptTrade')
@@ -84,7 +84,7 @@ module.exports = {
             fetchReply: true
         })
 
-        await tradeResp.awaitMessageComponent({ time: 60_000 })
+        await tradeResp.awaitMessageComponent({ time: 120_000 })
             .catch(async (error) => {
                 row.components[0].setDisabled(true)
                 row.components[1].setDisabled(true)
