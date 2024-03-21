@@ -13,22 +13,22 @@ module.exports = {
                     return;
                 }
 
-                currEmbed = interaction.message.embeds[0].data
-                uId = interaction.user.id
-                chkDbId = (await checkUser(db, uId))['user_id']
-                userId = currEmbed.footer.icon_url.split("/")[4]
-                dbId = (await checkUser(db, userId))['user_id']
+                var currEmbed = interaction.message.embeds[0].data
+                const uId = interaction.user.id
+                const chkDbId = (await checkUser(db, uId))['user_id']
+                const userId = currEmbed.footer.icon_url.split("/")[4]
+                const dbId = (await checkUser(db, userId))['user_id']
                 
-                offset = 0;
+                var offset = 0;
                 if(interaction.customId === 'cardNext'){offset = 1}
                 else if(interaction.customId === 'cardPrev'){offset = -1}
 
                 const msgTitle = dbId === chkDbId ? 0 : currEmbed.title.replace('These are ', '').replace(`'s cards:`, '')
-                page = parseInt(currEmbed.footer.text.replace('Page ',''))+offset
-                maxPage = await cardsMaxPage(db, dbId)
+                const page = parseInt(currEmbed.footer.text.replace('Page ',''))+offset
+                const maxPage = await cardsMaxPage(db, dbId)
                 
-                newEmbed = await cardEmbed(db, dbId, msgTitle, currEmbed.footer.icon_url, page)
-                newRow = await cardRow(page, maxPage)
+                var newEmbed = await cardEmbed(db, dbId, msgTitle, currEmbed.footer.icon_url, page)
+                var newRow = await cardRow(page, maxPage)
 
                 // MariaDB moment
                 if (page <= 1) {newRow.components[0].setDisabled(true)}
@@ -40,16 +40,17 @@ module.exports = {
                 })
 
             } else if(interaction.customId === 'acceptTrade'){
-                reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
-                sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
+                var embed = interaction.message.embeds[0].data
+                const reqId = embed.footer.icon_url.split("/")[4]
+                const sentId = embed.author.icon_url.split("/")[4]
                 if (interaction.user.id !== reqId) {
                     await interaction.reply({ content: "You cannot accept your own trade request!", ephemeral: true });
                     return;
                 }
 
-                reqDbId = (await checkUser(db, reqId))['user_id']
-                sentDbId = (await checkUser(db, sentId))['user_id']
-                cardJSON = await getAllCards(db, reqDbId)
+                const reqDbId = (await checkUser(db, reqId))['user_id']
+                const sentDbId = (await checkUser(db, sentId))['user_id']
+                const cardJSON = await getAllCards(db, reqDbId)
                 const cardSelect = new StringSelectMenuBuilder()
 			        .setCustomId('cardChoose')
 			        .setPlaceholder('Choose a card!')
@@ -69,7 +70,6 @@ module.exports = {
                 const btonRow = new ActionRowBuilder()
 			        .addComponents(cancelBton);
 
-                var embed = interaction.message.embeds[0].data
                 var newEmbed = new EmbedBuilder()
                     .setTitle(`Choose a card ${interaction.user.username}!`)
                     .setColor('277F4A')
@@ -82,20 +82,21 @@ module.exports = {
                     embeds: [newEmbed],
                     components: [row, btonRow],
                 });
+
             } else if(interaction.customId === 'confirmTrade'){
-                embed = interaction.message.embeds[0].data
-                reqId = embed.footer.icon_url.split("/")[4]
-                sentId = embed.author.icon_url.split("/")[4]
+                var embed = interaction.message.embeds[0].data
+                const reqId = embed.footer.icon_url.split("/")[4]
+                const sentId = embed.author.icon_url.split("/")[4]
                 if (interaction.user.id !== sentId) {
                     await interaction.reply({ content: "You are not the user that has to confirm this trade!", ephemeral: true });
                     return;
                 }
 
-                dbOne = (await checkUser(db, sentId))['user_id']
-                dbTwo = (await checkUser(db, reqId))['user_id']
-                cards = embed.description.split(" ⇔ ")
-                cardOne = cards[0].replace(cards[0].split(" ")[0], '').replace(" ", '')
-                cardTwo = cards[1].replace(cards[1].split(" ")[0], '').replace(" ", '')
+                const dbOne = (await checkUser(db, sentId))['user_id']
+                const dbTwo = (await checkUser(db, reqId))['user_id']
+                const cards = embed.description.split(" ⇔ ")
+                const cardOne = cards[0].replace(cards[0].split(" ")[0], '').replace(" ", '')
+                const cardTwo = cards[1].replace(cards[1].split(" ")[0], '').replace(" ", '')
                 tradeCards(db, dbOne, dbTwo, cardOne, cardTwo)
                 
                 embed.footer.text = `Trade completed!`
@@ -104,9 +105,10 @@ module.exports = {
                     components: []
                 })
                 await interaction.followUp("Trade has been completed, please check that you both have the corresponding cards!")
+
             } else if(interaction.customId === 'denyTrade'){
-                reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
-                sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
+                const reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
+                const sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
                 var embed = interaction.message.embeds[0].data
                 embed.footer.text = `Trade cancelled by ${interaction.user.username}`
 
@@ -123,7 +125,7 @@ module.exports = {
             }
         } else if (interaction.isStringSelectMenu()){
             if(interaction.customId === 'cardChoose'){
-                reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
+                const reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 if (interaction.user.id !== reqId){
                     await interaction.reply({ content: "You cannot interact with a trade that is not directed to you!", ephemeral: true });
                     return;
