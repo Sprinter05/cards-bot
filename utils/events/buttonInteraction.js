@@ -65,7 +65,6 @@ module.exports = {
                 }
 
                 const reqDbId = (await checkUser(db, reqId))['user_id']
-                const sentDbId = (await checkUser(db, sentId))['user_id']
                 const cardJSON = await getAllCards(db, reqDbId)
                 const cardSelect = new StringSelectMenuBuilder()
 			        .setCustomId('cardChoose')
