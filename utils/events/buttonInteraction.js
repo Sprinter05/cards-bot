@@ -1,7 +1,8 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 var { checkUser, getAllCards, getCardData } = require('../queries')
 var { tradeCards } = require('../manips')
-var { cardEmbed, cardsMaxPage, cardRow, rarityRequest } = require('../functionExporter')
+var { cardEmbed, cardsMaxPage, cardRow, rarityRequest, tradeConfirmEmbed, tradeConfirmRow } = require('../functionExporter');
+const trade = require('../../commands/cards/trade');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -46,6 +47,21 @@ module.exports = {
                 if (interaction.user.id !== reqId) {
                     await interaction.reply({ content: "You cannot accept your own trade request!", ephemeral: true });
                     return;
+                }
+                if(embed.fields[1].value !== 'None'){
+                    const ogCard = embed.fields[0].value
+                    const tradeCard = embed.fields[1].value
+                    const embedStr = `${ogCard} ⇔ ${tradeCard}`
+                    const cardNoEmoji =tradeCard.replace(tradeCard.split(" ")[0], '').replace(" ", '')
+                    const infoCard = await getCardData(db, cardNoEmoji)
+                    const redirectEmbed = tradeConfirmEmbed(embed, embedStr, infoCard['card_img_url'])
+                    const redirectRow = tradeConfirmRow()
+
+                    interaction.update({
+                        embeds: [redirectEmbed],
+                        components: [redirectRow],
+                    })
+                    return
                 }
 
                 const reqDbId = (await checkUser(db, reqId))['user_id']
@@ -137,26 +153,10 @@ module.exports = {
                 const ogCard = cardStr.replace(cardStr.split(" ")[0], '').replace(" ", '')
                 const ogCardEmoji = cardStr.split(" ")[0]
                 const tradeCardEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
+                const embedString = `${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${interaction.values[0]}`
 
-                var newEmbed = new EmbedBuilder()
-                    .setTitle(`Confirm the trade ${embed.author.name.split(" ")[0]}!`)
-                    .setDescription(`${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${interaction.values[0]}`)
-                    .setColor("#18E6E6")
-                    .setFooter({ text: `Trade accepted!`, iconURL: interaction.user.avatarURL()})
-                    .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
-                    .setImage(queryCard['card_img_url'])
-                    .setThumbnail(embed.image.url)
-
-                const confirmBton = new ButtonBuilder()
-                    .setCustomId('confirmTrade')
-                    .setLabel('Confirm')
-                    .setStyle(ButtonStyle.Success);
-                const cancelBton = new ButtonBuilder()
-                    .setCustomId('denyTrade')
-                    .setLabel('Cancel')
-                    .setStyle(ButtonStyle.Danger);
-                const newRow = new ActionRowBuilder()
-                    .addComponents(confirmBton, cancelBton);
+                const newEmbed = tradeConfirmEmbed(embed, embedString, queryCard['card_img_url'])
+                const newRow = tradeConfirmRow()
 
                 interaction.update({
                     embeds: [newEmbed],

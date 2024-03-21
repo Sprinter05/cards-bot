@@ -82,6 +82,32 @@ exports.packEmbed = async function(db, titleUser, uID){
     return embed;
 }
 
+exports.tradeConfirmEmbed = function(embed, descString, cardImg){
+    var newEmbed = new EmbedBuilder()
+        .setTitle(`Confirm the trade ${embed.author.name.split(" ")[0]}!`)
+        .setDescription(descString)
+        .setColor("#18E6E6")
+        .setFooter({ text: `Trade accepted!`, iconURL: embed.footer.icon_url})
+        .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
+        .setImage(cardImg)
+        .setThumbnail(embed.image.url)
+    return newEmbed;
+}
+
+exports.tradeConfirmRow = function(){
+    const confirmBton = new ButtonBuilder()
+        .setCustomId('confirmTrade')
+        .setLabel('Confirm')
+        .setStyle(ButtonStyle.Success);
+    const cancelBton = new ButtonBuilder()
+        .setCustomId('denyTrade')
+        .setLabel('Cancel')
+        .setStyle(ButtonStyle.Danger);
+    const newRow = new ActionRowBuilder()
+        .addComponents(confirmBton, cancelBton);
+    return newRow
+}
+
 exports.rarityRequest = function(rarity, request){
     var retValue
     switch(rarity){
