@@ -39,6 +39,11 @@ module.exports = {
         var cardReq = interaction.options.getString('request')
         const queryRCard = cardReq !== null ? await getCardData(cardsdb, cardReq) : 0
 
+        if (cardReq === cardTTOne){
+            await interaction.reply({ content: "You cannot request the same card that you are trading!", ephemeral: true })
+            return
+        }
+
         if ((await countCards(cardsdb, dbId)) <= 0 ) return await interaction.reply("You don't have any cards!");
         else if ((await countCards(cardsdb, dbTTId)) <= 0) return await interaction.reply(`${userToTrade.username} doesn't have any cards!`);
 

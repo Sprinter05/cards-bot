@@ -147,13 +147,19 @@ module.exports = {
                     return;
                 }
                 
-                const queryCard = await getCardData(db, interaction.values[0])
+                const givenCard = interaction.values[0]
+                const queryCard = await getCardData(db, givenCard)
                 var embed = interaction.message.embeds[0].data
                 const cardStr = embed.description.replace("Trading for ", '')
                 const ogCard = cardStr.replace(cardStr.split(" ")[0], '').replace(" ", '')
                 const ogCardEmoji = cardStr.split(" ")[0]
                 const tradeCardEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
-                const embedString = `${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${interaction.values[0]}`
+                const embedString = `${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${givenCard}`
+
+                if (givenCard === ogCard){
+                    await interaction.reply({ content: "You cannot offer the same card that you would get!", ephemeral: true })
+                    return
+                }
 
                 const newEmbed = tradeConfirmEmbed(embed, embedString, queryCard['card_img_url'])
                 const newRow = tradeConfirmRow()
