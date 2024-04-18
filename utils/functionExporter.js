@@ -94,6 +94,20 @@ exports.tradeConfirmEmbed = function(embed, descString, cardImg){
     return newEmbed;
 }
 
+exports.ddDataRow = function(){
+    const confirmBton = new ButtonBuilder()
+        .setCustomId('acceptReset')
+        .setLabel('💣 Confirm')
+        .setStyle(ButtonStyle.Danger);
+    const cancelBton = new ButtonBuilder()
+        .setCustomId('cancelReset')
+        .setLabel('⛔ Cancel')
+        .setStyle(ButtonStyle.Secondary);
+    const row = new ActionRowBuilder()
+        .addComponents(confirmBton, cancelBton);
+    return row
+}
+
 exports.tradeConfirmRow = function(){
     const confirmBton = new ButtonBuilder()
         .setCustomId('confirmTrade')

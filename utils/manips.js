@@ -106,3 +106,16 @@ exports.tradeCards = async function(database, id1, id2, card1, card2){
     exports.insertCard(database, id2, card1, quantityT2)
     return;
 }
+
+exports.deleteAllData = async function(database, id){
+    const trans = await database.transaction()
+    try {
+        await database.query(
+            `DELETE FROM users WHERE user_id = ?;`,
+            { replacements: [id], type: QueryTypes.DELETE, transaction: trans }
+        )
+        await trans.commit()
+    } catch (e) {
+        await trans.rollback()
+    }
+}

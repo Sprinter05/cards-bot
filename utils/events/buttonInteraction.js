@@ -1,7 +1,7 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 var { checkUser, getAllCards, getCardData } = require('../queries')
 var { tradeCards } = require('../manips')
-var { cardEmbed, cardsMaxPage, cardRow, rarityRequest, tradeConfirmEmbed, tradeConfirmRow } = require('../functionExporter');
+var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, rarityRequest, tradeConfirmEmbed, tradeConfirmRow } = require('../functionExporter');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -149,6 +149,28 @@ module.exports = {
                 })
                 await interaction.followUp("Trade has been cancelled!")
                 break;
+            } case('acceptReset'): {
+                if (interaction.user.id !== interaction.message.interaction.user.id){
+                    await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
+                    return;
+                }
+
+                var chkEmbed = interaction.message.embed
+                if (chkEmbed.description.includes("FINAL WARNING")) {
+                    // call func                    
+                    return await interaction.update({components: []})
+                }
+
+                const newRow = ddDataRow()
+                var newEmbed = new EmbedBuilder()
+                    .setDescription("💣 **FINAL WARNING:**\nAre you absolutely sure you want to delete all your data? You will NOT be able to recover it.")
+                    .setColor("#EB0E0E")
+                
+                await interaction.update({
+                    embed: [newEmbed],
+                    components: [newRow]
+                })
+
             } default: return; }
         } else if (interaction.isStringSelectMenu()){
             if(interaction.customId === 'cardChoose'){
