@@ -2,13 +2,13 @@ const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptio
 var { checkUser, getAllCards, getCardData } = require('../queries')
 var { tradeCards } = require('../manips')
 var { cardEmbed, cardsMaxPage, cardRow, rarityRequest, tradeConfirmEmbed, tradeConfirmRow } = require('../functionExporter');
-const trade = require('../../commands/cards/trade');
 
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction, db) {
 	    if (interaction.isButton()) {
-            if(interaction.customId === 'cardPrev' || interaction.customId == 'cardNext'){
+            switch(interaction.customId){
+            case('cardPrev'): case('cardNext'): {
                 if (interaction.user.id !== interaction.message.interaction.user.id){
                     await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
                     return;
@@ -39,8 +39,8 @@ module.exports = {
                     embeds: [newEmbed],
                     components: [newRow],
                 })
-
-            } else if(interaction.customId === 'acceptTrade'){
+                break;
+            } case('acceptTrade'):{
                 var embed = interaction.message.embeds[0].data
                 const reqId = embed.footer.icon_url.split("/")[4]
                 const sentId = embed.author.icon_url.split("/")[4]
@@ -97,8 +97,8 @@ module.exports = {
                     embeds: [newEmbed],
                     components: [row, btonRow],
                 });
-
-            } else if(interaction.customId === 'confirmTrade'){
+                break;
+            } case('confirmTrade'): {
                 var embed = interaction.message.embeds[0].data
                 const reqId = embed.footer.icon_url.split("/")[4]
                 const sentId = embed.author.icon_url.split("/")[4]
@@ -120,8 +120,8 @@ module.exports = {
                     components: []
                 })
                 await interaction.followUp("Trade has been completed, please check that you both have the corresponding cards!")
-
-            } else if(interaction.customId === 'denyTrade'){
+                break;
+            } case('denyTrade'): {
                 const reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
                 const sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
                 var embed = interaction.message.embeds[0].data
@@ -137,8 +137,8 @@ module.exports = {
                     components: []
                 })
                 await interaction.followUp("Trade has been cancelled!")
-            
-            } else if (interaction.customId === 'cancelReset'){
+                break;
+            } case('cancelReset'): {
                 if (interaction.user.id !== interaction.message.interaction.user.id){
                     await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
                     return;
@@ -148,8 +148,8 @@ module.exports = {
                     components: []
                 })
                 await interaction.followUp("Trade has been cancelled!")
-                
-            }
+                break;
+            } default: return; }
         } else if (interaction.isStringSelectMenu()){
             if(interaction.customId === 'cardChoose'){
                 const reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
