@@ -5,7 +5,7 @@ var { rarEmojis, cEmoji } = require('../../properties.json')
 module.exports = {
     // Define data to export to Discord
     data: new SlashCommandBuilder()
-        .setName('stats')
+        .setName('profile')
         .setDescription ("Show a user's stats")
         .addUserOption(option =>
           option
