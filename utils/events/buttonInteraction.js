@@ -1,6 +1,6 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 var { checkUser, getAllCards, getCardData } = require('../queries')
-var { tradeCards } = require('../manips')
+var { tradeCards, deleteAllData } = require('../manips')
 var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, rarityRequest, tradeConfirmEmbed, tradeConfirmRow } = require('../functionExporter');
 
 module.exports = {
@@ -155,10 +155,13 @@ module.exports = {
                     return;
                 }
 
-                var chkEmbed = interaction.message.embed
+                const userId = interaction.user.id
+                const dbId = (await checkUser(db, userId))['user_id']
+                var chkEmbed = interaction.message.embeds[0].data
                 if (chkEmbed.description.includes("FINAL WARNING")) {
-                    // call func                    
-                    return await interaction.update({components: []})
+                    deleteAllData(db, dbId)
+                    await interaction.update({components: []})
+                    return await interaction.followUp("All your data has been reset.")
                 }
 
                 const newRow = ddDataRow()
@@ -167,7 +170,7 @@ module.exports = {
                     .setColor("#EB0E0E")
                 
                 await interaction.update({
-                    embed: [newEmbed],
+                    embeds: [newEmbed],
                     components: [newRow]
                 })
 
