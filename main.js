@@ -74,6 +74,7 @@ client.on(Events.InteractionCreate, async interaction => {
     try {
 		// Check if command is cards related and if user is in the users database 
 		if (cardCmds.includes(interaction.commandName.concat('.js')) && (await checkUser(cardsdb, interaction.user.id)) === null ){
+			if (interaction.commandName === 'reset_data') return await interaction.reply({ content: "You have no data to reset!", ephemeral: true });
 			logUser(cardsdb, interaction.user.id)
 		}
 		//if (interaction.commandName === 'reset_data' && interaction.guild) return await interaction.reply({ content: "You can only reset your data in the bot's DMs", ephemeral: true }); 

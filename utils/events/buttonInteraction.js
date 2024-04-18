@@ -147,7 +147,7 @@ module.exports = {
                 await interaction.update({
                     components: []
                 })
-                await interaction.followUp("Trade has been cancelled!")
+                await interaction.followUp("Data deletion has been cancelled!")
                 break;
             } case('acceptReset'): {
                 if (interaction.user.id !== interaction.message.interaction.user.id){
