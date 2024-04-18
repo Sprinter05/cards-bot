@@ -137,6 +137,18 @@ module.exports = {
                     components: []
                 })
                 await interaction.followUp("Trade has been cancelled!")
+            
+            } else if (interaction.customId === 'cancelReset'){
+                if (interaction.user.id !== interaction.message.interaction.user.id){
+                    await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
+                    return;
+                }
+
+                await interaction.update({
+                    components: []
+                })
+                await interaction.followUp("Trade has been cancelled!")
+                
             }
         } else if (interaction.isStringSelectMenu()){
             if(interaction.customId === 'cardChoose'){

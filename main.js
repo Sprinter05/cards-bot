@@ -1,5 +1,5 @@
 // Discord and command imports
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
 const { checkUser } = require('./utils/queries')
 const { logUser } = require('./utils/manips')
 
@@ -41,7 +41,9 @@ cardsdb.authenticate().then(() => {
 });
 
 // Setup client and config
-const client = new Client({ intents: [GatewayIntentBits.Guilds]});
+const client = new Client(
+	{ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.DirectMessageReactions, GatewayIntentBits.MessageContent] }
+);
 const { token } = require('./config.json');
 const path = require('node:path');
 
@@ -74,6 +76,7 @@ client.on(Events.InteractionCreate, async interaction => {
 		if (cardCmds.includes(interaction.commandName.concat('.js')) && (await checkUser(cardsdb, interaction.user.id)) === null ){
 			logUser(cardsdb, interaction.user.id)
 		}
+		//if (interaction.commandName === 'reset_data' && interaction.guild) return await interaction.reply({ content: "You can only reset your data in the bot's DMs", ephemeral: true }); 
         await command.execute(interaction, cardsdb);
     } catch(error) {
         console.error(error);
