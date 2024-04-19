@@ -16,7 +16,6 @@ module.exports = {
         .setDescription('Log Lines')
         .setRequired(false)
         .setMinValue(1)
-        .setMaxValue(40)
     ),
   async execute(interaction, cardsdb){
     if (interaction.member.id !== botowner){
@@ -44,8 +43,10 @@ module.exports = {
         }
       })
       stream.on('close', async () => {
-        if (strLog.length <= 0) return await interaction.reply("Log is empty!") 
-        await interaction.reply(codeBlock('asciidoc', strLog.join('\n')))
+        if (strLog.length <= 0) return await interaction.reply("Log is empty!")
+        try {
+          await interaction.reply({content: codeBlock('asciidoc', strLog.join('\n')), ephemeral: true })
+        } catch(e) { await interaction.reply({content: "Text is too big!", ephemeral:true })}
       })
     }
   }
