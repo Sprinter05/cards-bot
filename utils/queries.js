@@ -33,6 +33,14 @@ exports.countCards = async function(database, id, rarity){
     return countCards['result'];
 }
 
+exports.packInfo = async function(database, pId){
+    const packData = database.query(
+        `SELECT card_amount, price, normal_percentage, rare_percentage, ultrarare_percentage, special_percentage FROM packs WHERE pack_id = ?;`,
+        {replacements: [pId], type: QueryTypes.SELECT, plain: true}
+    )
+    return packData
+}
+
 exports.queryCards = async function(database, id, page) {
     const offset = (page-1)*entries
     const userCards = await database.query(
