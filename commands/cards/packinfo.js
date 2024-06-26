@@ -31,7 +31,6 @@ module.exports = {
                 embed.setDescription("1 Card (No guarantees)")
                 break;
             case '2':
-                const rDatum = await packInfo(cardsdb, parseInt(pack))
                 embed.setTitle(`${pacEmojis.sPack} Special Pack`)
                 embed.setColor(pacColors.sPack)
                 embed.setThumbnail(pacIcons.sPack)
@@ -55,7 +54,7 @@ module.exports = {
         }
         const packDatum = await packInfo(cardsdb, parseInt(pack))
         embed.addFields(
-            { name: `${cEmoji} Price:`, value: packDatum['price'] },
+            { name: `${cEmoji} Price:`, value: packDatum['price'].toString() },
             { name: `${rarEmojis.nCard} Normal Card:`, value: packDatum['normal_percentage'] + '%' },
             { name: `${rarEmojis.rCard} Rare Card:`, value: packDatum['rare_percentage'] + '%' },
             { name: `${rarEmojis.urCard} Ultra Rare Card`, value: packDatum['ultrarare_percentage'] + '%' },
