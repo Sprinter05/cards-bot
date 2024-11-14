@@ -4,6 +4,7 @@
   "main": "main.js",
   "scripts": {
     "start": "nodemon src/main.js",
+    "debug": "nodemon --inspect src/main.js",
     "deploy": "node src/deploy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

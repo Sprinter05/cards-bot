@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "npm launch",
+            "request": "launch",
+            "command": "npm start",
+            "cwd": "${workspaceFolder}",
+            "type": "node-terminal",
+        },
+        {
+            "name": "npm debug",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": true,
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run-script", "debug"]
+        }
+    ]
+}
