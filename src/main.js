@@ -1,3 +1,6 @@
+// ? Remove JSON object on queries
+// TODO: Open command
+
 // Discord and command imports
 const { Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
 const { checkUser } = require('./utils/db/queries')
@@ -19,7 +22,7 @@ const dateString = `${cDay}-${cMonth}-${cYear} at ${cHour}:${cMinutes}:${cSecond
 // Database
 const Sequelize = require('sequelize');
 const { database } = require("../config/config.json")
-const seqLog = fs.createWriteStream('../logs/sql.log', {'flags': 'a'});
+const seqLog = fs.createWriteStream('logs/sql.log', {'flags': 'a'});
 seqLog.write(`[LOG] Starting in ${dateString}\n`)
 const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd, {
     host: database.ip,
