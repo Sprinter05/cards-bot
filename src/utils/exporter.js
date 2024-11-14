@@ -34,6 +34,7 @@ const Packs = Object.freeze({
     'Ultra Rare Pack': pacEmojis.urPack,
     'Exclusive Pack': pacEmojis.ePack,
 })
+exports.Packs = Packs // For use outside
 
 // Return the highest page that can be displayed
 exports.cardsMaxPage = async function(db, uID){
