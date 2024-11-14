@@ -1,7 +1,7 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 var { checkUser, getAllCards, getCardData } = require('../db/queries')
 var { tradeCards, deleteAllData } = require('../db/manips')
-var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, rarityRequest, tradeConfirmEmbed, tradeConfirmRow } = require('../functionExporter');
+var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, Rarity, tradeConfirmEmbed, tradeConfirmRow } = require('../exporter');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -189,7 +189,7 @@ module.exports = {
                 const cardStr = embed.description.replace("Trading for ", '')
                 const ogCard = cardStr.replace(cardStr.split(" ")[0], '').replace(" ", '')
                 const ogCardEmoji = cardStr.split(" ")[0]
-                const tradeCardEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
+                const tradeCardEmoji = Rarity[queryCard['card_rarity_id']].emoji
                 const embedString = `${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${givenCard}`
 
                 if (givenCard === ogCard){

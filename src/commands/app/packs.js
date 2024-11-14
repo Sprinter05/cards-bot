@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js")
-var { packEmbed } = require('../../utils/functionExporter.js')
+var { packEmbed } = require('../../utils/exporter')
 var { countPacks, checkUser } = require('../../utils/db/queries.js')
 
 module.exports = {

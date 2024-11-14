@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js")
-var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/functionExporter.js')
+var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/exporter')
 var { countCards, checkUser } = require('../../utils/db/queries.js')
 
 module.exports = {

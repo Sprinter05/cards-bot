@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-const { ddDataRow } = require("../../utils/functionExporter.js");
+const { ddDataRow } = require("../../utils/exporter.js");
 
 module.exports = {
     // Define data to export to Discord

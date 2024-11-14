@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionCollector  } = require("discord.js")
-var { rarityRequest } = require('../../utils/functionExporter.js')
+var { Rarity } = require('../../utils/exporter.js')
 var { countCards, checkUser, getCardData, checkCardOwn } = require('../../utils/db/queries.js')
 
 module.exports = {
@@ -56,8 +56,8 @@ module.exports = {
         if (cardOwned === false) return await interaction.reply("You don't have that card!")
         if (cardROwned === false) return await interaction.reply(`${userToTrade.username} doesn't have the requested card!`)
 
-        const rarEmoji = rarityRequest(queryCard['card_rarity_id'], 'emoji')
-        const rarREmoji = rarityRequest(queryRCard['card_rarity_id'], 'emoji')
+        const rarEmoji = Rarity[queryCard['card_rarity_id']].emoji
+        const rarREmoji = Rarity[queryRCard['card_rarity_id']].emoji
 
         const reqStr = cardReq === null ? 'None' : `${rarREmoji} ${cardReq}`
 

@@ -27,7 +27,7 @@ for (const folder of commandFolders) {
 // Construct and prepare an instance of the REST module
 const rest = new REST().setToken(token);
 
-// and deploy your commands!
+// Refresh commands and deploy
 (async () => {
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
@@ -45,7 +45,6 @@ const rest = new REST().setToken(token);
 		.catch(console.error);*/
 
 	} catch (error) {
-		// And of course, make sure you catch and log any errors!
 		console.error(error);
 	}
 })();
