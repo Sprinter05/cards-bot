@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require("discord.js")
 const { SlashCommandBuilder } = require("discord.js")
+const { logoURL } = require('../../../config/properties.json')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +9,7 @@ module.exports = {
     async execute(interaction, cardsdb){
         var embed = new EmbedBuilder()
         .setTitle("Paper Mario Card Packs")
-        .setThumbnail('https://cdn.discordapp.com/attachments/727908737393754165/737282550229106778/Icon.png')
+        .setThumbnail(logoURL)
         .setFooter({ text: 'Code by Sprinter05 | Card designs by Sprinter05 and tee.'})
 
         await interaction.reply({embeds: [embed]})

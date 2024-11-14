@@ -19,6 +19,7 @@
         }
     },
     "cEmoji": "<:coin:1214561654629728326>",
+    "logoURL": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/logo.png?inline=true",
     "pacEmojis": {
         "fPack": "<:free_pack:1212011824002760714>",
         "sPack": "<:special_pack:1212011901651918869>",
@@ -26,10 +27,10 @@
         "ePack": "<:exclusive_pack:1212011946191102052>"
     },
     "pacIcons": {
-        "fPack": "https://media.discordapp.net/attachments/1208718279904985098/1235565506967371797/free_pack.png?ex=6634d58c&is=6633840c&hm=1ee4b1c4fa6ef297b68b24cec5eb01da06876c3c8918deee00f89d0fa3db5cce&=&format=webp&quality=lossless",
-        "sPack": "https://media.discordapp.net/attachments/1208718279904985098/1235565507411836928/special_pack.png?ex=6634d58c&is=6633840c&hm=17f657573df63930c20c5fb382ac3dc290dba1fd9526402c99cd6bd0bf5c0837&=&format=webp&quality=lossless&width=770&height=676",
-        "urPack": "https://media.discordapp.net/attachments/1208718279904985098/1235565506270986301/ultra_pack.png?ex=6634d58c&is=6633840c&hm=9a190e6c3ed93aad16cdd4289ef57d7d4898fdb7aa463607d1d803d850b18747&=&format=webp&quality=lossless&width=685&height=676",
-        "ePack": "https://media.discordapp.net/attachments/1208718279904985098/1235565506661191740/exlusive_pack.png?ex=6634d58c&is=6633840c&hm=7694c2886879c4203e115be016476659337b2f8dfb4156b7af1b7fe51b90b9fc&=&format=webp&quality=lossless&width=727&height=676"
+        "fPack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/free_pack.png?inline=true",
+        "sPack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/special_pack.png?inline=true",
+        "urPack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/ultra_pack.png?inline=true",
+        "ePack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/exclusive_pack.png?inline=true"
     },
     "pacColors": {
         "fPack": "#AA4601",
@@ -44,10 +45,10 @@
         "sCard": "<:special_card:1208721078403338240>"
     },
     "rarIcons": {
-        "nCard": "https://media.discordapp.net/attachments/1208718279904985098/1208718359823122493/normal.png?ex=6634b931&is=663367b1&hm=d9dee8fbafddc4d619d7ef3795132972f92fec79c52fd0aadde3a98d612fac7e&=&format=webp&quality=lossless&width=263&height=350",
-        "rCard": "https://media.discordapp.net/attachments/1208718279904985098/1208718370422399056/rare.png?ex=6634b934&is=663367b4&hm=e3897d9023b6530d9efe9b46689817772c7b14a0407248596ffd6b943279595f&=&format=webp&quality=lossless&width=507&height=676",
-        "urCard": "https://media.discordapp.net/attachments/1208718279904985098/1208718379448275024/ultrarare.png?ex=6634b936&is=663367b6&hm=cd968fe352e886d5dd4dc6fc172053127c716ed92e52db062adb5cf7610ea036&=&format=webp&quality=lossless&width=507&height=676",
-        "sCard": "https://media.discordapp.net/attachments/1208718279904985098/1208718389904674817/special.png?ex=6634b939&is=663367b9&hm=298ec54a8774a678253f671e9eeaf83fc8acfdbe49427ac7e8699946915c1e35&=&format=webp&quality=lossless&width=263&height=350"
+        "nCard": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/normal.png?inline=true",
+        "rCard": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/rare.png?inline=true",
+        "urCard":"https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/ultrarare.png?inline=true",
+        "sCard": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/special.png?inline=true"
     },
     "rarColors": {
         "nCard": "#8F8D8E",
