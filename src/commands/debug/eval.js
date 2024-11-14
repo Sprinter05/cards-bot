@@ -11,25 +11,27 @@ module.exports = {
       option.setName('cmd')
         .setDescription('Evaluate code')),
   async execute(interaction, cardsdb){
+    // ! ONLY the owner CAN evaluate expressions
     if (interaction.member.id !== botowner){
       var evalEmbed = new EmbedBuilder()
         .setDescription("❌ You are not the `Bot Owner` so you can't use this command.")
         .setColor("#f11313")
       await interaction.reply({embeds: [evalEmbed], ephemeral: true});
     } else {
+      // Format code block that we are executing
       function clean(text) {
         if (typeof(text) === "string")
           return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
         else
           return text;
       }
-      try {
+      try { // Try to evaluate the expression
         const toEval = interaction.options.getString('cmd');
         let evaluated = require("util").inspect(eval(toEval, {depth: 0}))
-        if (typeof evaled !== "string"){
+        if (typeof evaluated !== "string"){ // If output not string then we code block it 
           interaction.reply(codeBlock('js', clean(evaluated)));  
         }
-      } catch (err) {
+      } catch (err) { // Output error (also formatted)
         interaction.reply(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
       }
     }

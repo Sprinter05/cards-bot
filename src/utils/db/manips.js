@@ -130,9 +130,9 @@ exports.tradeCards = async function(database, id1, id2, card1, card2){
 
 // Delete all data from a user (including tables referencing it)
 exports.deleteAllData = async function(database, id){
-    // Start a transaction
+    // ? Start a transaction
     const trans = await database.transaction()
-    try { // Try toelete all data
+    try { // Try to delete all data
         await database.query(
             `DELETE FROM users WHERE user_id = ?;`,
             { replacements: [id], type: QueryTypes.DELETE, transaction: trans }

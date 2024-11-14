@@ -7,6 +7,7 @@ module.exports = {
         .setName('info')
         .setDescription ("This command is to show the information about the bot"),
     async execute(interaction, cardsdb){
+        // TODO: Improve embed
         var embed = new EmbedBuilder()
         .setTitle("Paper Mario Card Packs")
         .setThumbnail(logoURL)
