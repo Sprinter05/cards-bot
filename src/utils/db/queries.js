@@ -1,5 +1,5 @@
 const { QueryTypes } = require('sequelize');
-const { entries } = require('../../../config/properties.json');
+const { entries } = require(appRoot + 'config/properties.json');
 
 //! Queries shoule never use SELECT *
 

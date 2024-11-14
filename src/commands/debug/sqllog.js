@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, codeBlock } = require("discord.js")
-const { botowner } = require('../../../config/config.json');
+const { botowner } = require(appRoot + 'config/config.json');
 const fs = require('fs')
 const rl = require('readline')
 const path = require('node:path');
@@ -28,7 +28,7 @@ module.exports = {
       var control = 0
       var toRead = interaction.options.getInteger('lines') ?? 10;
       // Read the contents of the log file
-      var loc = path.resolve(__dirname, "../../logs/sql.log")
+      var loc = path.resolve(appRoot + "logs/sql.log")
       var text = fs.readFileSync(loc)
       var lines = text.toString().split('\n');
       var maxLine = lines.length - 1;

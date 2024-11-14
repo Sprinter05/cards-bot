@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js")
-var { packEmbed } = require('../../utils/exporter')
-var { countPacks, checkUser } = require('../../utils/db/queries.js')
+var { packEmbed } = require(appRoot + 'src/utils/exporter')
+var { countPacks, checkUser } = require(appRoot + 'src/utils/db/queries')
 
 module.exports = {
     // Define data to export to Discord

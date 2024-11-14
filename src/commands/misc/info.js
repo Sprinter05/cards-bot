@@ -1,6 +1,6 @@
 const { EmbedBuilder } = require("discord.js")
 const { SlashCommandBuilder } = require("discord.js")
-const { logoURL } = require('../../../config/properties.json')
+const { logoURL } = require(appRoot + 'config/properties.json')
 
 module.exports = {
     data: new SlashCommandBuilder()

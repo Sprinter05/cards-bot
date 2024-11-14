@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js")
-var { checkDupes, checkUser } = require('../../utils/db/queries')
-var { scrapeCard, scrapeCollection, updateMoney } = require('../../utils/db/manips')
-var { cEmoji } = require('../../../config/properties.json');
+var { checkDupes, checkUser } = require(appRoot + 'src/utils/db/queries')
+var { scrapeCard, scrapeCollection, updateMoney } = require(appRoot + 'src/utils/db/manips')
+var { cEmoji } = require(appRoot + 'config/properties.json');
 
 module.exports = {
     // Define data to export to Discord

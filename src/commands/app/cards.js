@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js")
-var { cardEmbed, cardsMaxPage, cardRow } = require('../../utils/exporter')
-var { countCards, checkUser } = require('../../utils/db/queries.js')
+var { cardEmbed, cardsMaxPage, cardRow } = require(appRoot + 'src/utils/exporter')
+var { countCards, checkUser } = require(appRoot + 'src/utils/db/queries')
 
 module.exports = {
     // Define data to export to Discord

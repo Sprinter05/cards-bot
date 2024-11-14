@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionCollector  } = require("discord.js")
-var { Rarity } = require('../../utils/exporter.js')
-var { countCards, checkUser, getCardData, checkCardOwn } = require('../../utils/db/queries.js')
+var { Rarity } = require(appRoot + 'src/utils/exporter')
+var { countCards, checkUser, getCardData, checkCardOwn } = require(appRoot + 'src/utils/db/queries')
 
 module.exports = {
     // Define data to export to Discord

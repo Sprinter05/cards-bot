@@ -1,7 +1,7 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-var { checkUser, getAllCards, getCardData } = require('../db/queries')
-var { tradeCards, deleteAllData } = require('../db/manips')
-var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, Rarity, tradeConfirmEmbed, tradeConfirmRow } = require('../exporter');
+var { checkUser, getAllCards, getCardData } = require(appRoot + 'src/utils/db/queries')
+var { tradeCards, deleteAllData } = require(appRoot + 'src/utils/db/manips')
+var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, Rarity, tradeConfirmEmbed, tradeConfirmRow } = require(appRoot + 'src/utils/exporter');
 
 // Used for card page next and previous
 async function handleCardMove(interaction, db) {

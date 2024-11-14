@@ -1,5 +1,5 @@
 const { QueryTypes } = require('sequelize');
-const { scrapes } = require('../../../config/properties.json')
+const { scrapes } = require(appRoot + 'config/properties.json')
 
 // Create a random integer between 2 values
 exports.randomInt = function(min, max) {

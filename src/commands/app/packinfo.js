@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-const { pacColors, pacEmojis, pacIcons, rarEmojis, cEmoji } = require('../../../config/properties.json');
-const { packInfo } = require("../../utils/db/queries");
+const { pacColors, pacEmojis, pacIcons, rarEmojis, cEmoji } = require(appRoot + 'config/properties.json');
+const { packInfo } = require(appRoot + "src/utils/db/queries");
 
 module.exports = {
     // Define data to export to Discord

@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require("discord.js")
 const { SlashCommandBuilder } = require("discord.js")
 const { codeBlock } = require('discord.js');
-const { botowner } = require('../../../config/config.json');
+const { botowner } = require(appRoot + 'config/config.json');
 
 module.exports = {
   data: new SlashCommandBuilder()

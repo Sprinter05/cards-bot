@@ -1,12 +1,18 @@
 // ? Remove JSON object on queries
 // ? Hide credentials using SHA
-// TODO: Change resources hosting
+// ? Better file handling on imports
+// TODO: Change resources hosting on SQL database
 // TODO: Open command
+
+// Path handling
+const path = require('node:path');
+globalThis.appRoot = path.resolve(__dirname, '..') + '/'; // Before src
 
 // Discord and command imports
 const { Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
-const { checkUser } = require('./utils/db/queries')
-const { logUser } = require('./utils/db/manips')
+const { checkUser } = require(appRoot + 'src/utils/db/queries')
+const { logUser } = require(appRoot + 'src/utils/db/manips')
+
 
 // npm packages
 const fs = require('fs');
@@ -25,8 +31,8 @@ const dateString = `${cDay}-${cMonth}-${cYear} at ${cHour}:${cMinutes}:${cSecond
 // Database
 const Sequelize = require('sequelize');
 // Get database credentials and start log file
-const { database } = require("../config/config.json")
-const seqLog = fs.createWriteStream('logs/sql.log', {'flags': 'a'});
+const { database } = require(appRoot + "config/config.json")
+const seqLog = fs.createWriteStream(appRoot + 'logs/sql.log', {'flags': 'a'});
 seqLog.write(`[LOG] Starting in ${dateString}\n`)
 // Set up the database logging
 const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd, {
@@ -55,8 +61,7 @@ const client = new Client(
 	{ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages, GatewayIntentBits.DirectMessageReactions, GatewayIntentBits.MessageContent] }
 );
 // Token is sensitive data
-const { token } = require('../config/config.json');
-const path = require('node:path');
+const { token } = require(appRoot + 'config/config.json');
 
 // Create commands list
 client.commands = new Collection();

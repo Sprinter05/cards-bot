@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { QueryTypes } = require('sequelize');
-const { dependencies, version } = require('../../../package.json')
+const { dependencies, version } = require(appRoot + 'package.json')
 
 
 function format(secs){

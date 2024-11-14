@@ -1,6 +1,6 @@
-var { countCards, queryCards, queryPacks } = require('./db/queries')
+var { countCards, queryCards, queryPacks } = require(appRoot + 'src/utils/db/queries')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
-const { entries, rarColors, rarEmojis, rarIcons, pacEmojis } = require('../../config/properties.json')
+const { entries, rarColors, rarEmojis, rarIcons, pacEmojis } = require(appRoot + 'config/properties.json')
 
 // Object array for getting card values
 const Rarity = Object.freeze({
