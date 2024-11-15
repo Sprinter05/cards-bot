@@ -82,13 +82,45 @@ async function handleAcceptTrade(interaction, db){
     const cardSelect = new StringSelectMenuBuilder()
         .setCustomId('cardChoose')
         .setPlaceholder('Choose a card!')
+    var cardSelect2, cardSelect3 // In case theyre used
+    // Discord API limit (25 elements)
+    const thresh = cardJSON.length > 25 ? 25 : cardJSON.length
     // Adding each card the user has
-    for(let i=0; i<cardJSON.length; i++){
+    for(let i=0; i<thresh; i++){
         cardSelect.addOptions(
             new StringSelectMenuOptionBuilder()
                 .setLabel(cardJSON[i]['card_name'])
                 .setValue(cardJSON[i]['card_name']),
         )
+    }
+    // ? I think this is the best way to handle the API limit ngl
+    if (cardJSON.length > 25){
+        cardSelect2 = new StringSelectMenuBuilder()
+            .setCustomId('cardChoose2')
+            .setPlaceholder('Choose a card!')
+        // Discord API limit (25 elements)
+        const thresh2 = cardJSON.length > 50 ? 50 : cardJSON.length
+        // Adding each card the user has
+        for(let i=25; i<thresh2; i++){
+            cardSelect2.addOptions(
+                new StringSelectMenuOptionBuilder()
+                    .setLabel(cardJSON[i]['card_name'])
+                    .setValue(cardJSON[i]['card_name']),
+            )
+        }
+    }
+    if (cardJSON.length > 50){
+        cardSelect3 = new StringSelectMenuBuilder()
+            .setCustomId('cardChoose3')
+            .setPlaceholder('Choose a card!')
+        // Adding each card the user has
+        for(let i=50; i<cardJSON.length; i++){
+            cardSelect2.addOptions(
+                new StringSelectMenuOptionBuilder()
+                    .setLabel(cardJSON[i]['card_name'])
+                    .setValue(cardJSON[i]['card_name']),
+            )
+        }
     }
 
     // Embed buttons, rows and body
@@ -98,6 +130,15 @@ async function handleAcceptTrade(interaction, db){
         .setStyle(ButtonStyle.Danger);
     const row = new ActionRowBuilder()
         .addComponents(cardSelect);
+    var row2, row3 // API moment
+    if (cardJSON.length > 25){
+        row2 = new ActionRowBuilder()
+            .addComponents(cardSelect2);
+    }
+    if (cardJSON.length > 50){
+        row3 = new ActionRowBuilder()
+            .addComponents(cardSelect3);
+    }
     const btonRow = new ActionRowBuilder()
         .addComponents(cancelBton);
     var newEmbed = new EmbedBuilder()
@@ -108,10 +149,14 @@ async function handleAcceptTrade(interaction, db){
         .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
         .setImage(embed.image.url)
 
+    var compArr; // To see how many rows we need
+    if (cardJSON.length > 50) compArr = [row, row2, row3, btonRow]
+    else if (cardJSON.length > 25) compArr = [row, row2, btonRow]
+    else compArr = [row, btonRow]
     // Update trade status
     await interaction.update({
         embeds: [newEmbed],
-        components: [row, btonRow],
+        components: compArr,
     });
 }
 
@@ -275,9 +320,12 @@ module.exports = {
                 } default: return; 
             }
         } else if (interaction.isStringSelectMenu()){
-            // We do not need a switch case for one single ID
-            if(interaction.customId === 'cardChoose') 
-                await handleCardSelectorTrade(interaction, db)
+            // Switch case with the string selects bc API limit
+            switch(interaction.customId){
+                case('cardChoose'): case('cardChoose2'): case('cardChoose3'): {
+                    await handleCardSelectorTrade(interaction, db); break;
+                } default: return;
+            }
         } else return // Any other interaction must not do anything
     }
 };

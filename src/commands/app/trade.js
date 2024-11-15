@@ -64,7 +64,7 @@ module.exports = {
 
         // Build embed with information
         const rarEmoji = Rarity[queryCard['card_rarity_id']].emoji
-        const rarREmoji = Rarity[queryRCard['card_rarity_id']].emoji
+        const rarREmoji = cardReq === null ? '' : Rarity[queryRCard['card_rarity_id']].emoji
         const reqStr = cardReq === null ? 'None' : `${rarREmoji} ${cardReq}`
         var embed = new EmbedBuilder()
         .setTitle(`Trading requested to ${userToTrade.username}!`)
