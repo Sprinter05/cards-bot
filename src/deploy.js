@@ -1,7 +1,10 @@
-const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require(apRoot + 'config/config.json');
-const fs = require('node:fs');
+// Global path
 const path = require('node:path');
+globalThis.appRoot = path.resolve(__dirname, '..') + '/'; // Before src
+
+const { REST, Routes } = require('discord.js');
+const { clientId, guildId, token } = require(appRoot + 'config/config.json');
+const fs = require('node:fs');
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier

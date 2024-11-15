@@ -2,17 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "npm launch",
+            "name": "Launch via npm",
             "request": "launch",
             "command": "npm start",
             "cwd": "${workspaceFolder}",
             "type": "node-terminal",
         },
         {
-            "name": "npm debug",
+            "name": "Debug via npm",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
             "stopOnEntry": true,
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run-script", "debug"]

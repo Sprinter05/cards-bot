@@ -18,7 +18,7 @@ exports.checkMoney = async function(database, id){
         `SELECT coins FROM users WHERE user_id = ?`,
         {replacements: [id], type: QueryTypes.SELECT, plain: true}
     )
-    return money['coins']
+    return money == null ? 0 : money['coins']
 }
 
 // Counts the amount of cards a user has (this is used to check if it has no cards) 
