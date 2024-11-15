@@ -80,13 +80,15 @@ async function handleAcceptTrade(interaction, db){
     const reqDbId = (await checkUser(db, reqId))['user_id']
     const cardJSON = await getAllCards(db, reqDbId)
     var cardSels = [];
-    // Discord API limit (25 elements)
+    // ! Discord API limit (25 elements)
     const rounds = Math.ceil(cardJSON.length / 25)
-    // Adding each card the user has
+    // Adding each card the user has by sets of 25 on an array of select menus
     for (let j = 1; j <= rounds; j++){
         let cardSelect = new StringSelectMenuBuilder()
             .setCustomId(`cardChoose${j}`)
             .setPlaceholder('Choose a card!')
+        // If the card list length is not higher in this round we use its length
+        // This prevents accessing invalid positions on the card list array
         let thresh = cardJSON.length < j * 25 ? cardJSON.length : j * 25
         for(let i = (j-1) * 25; i < thresh; i++){
             cardSelect.addOptions(
@@ -103,7 +105,7 @@ async function handleAcceptTrade(interaction, db){
         .setCustomId('denyTrade')
         .setLabel('Cancel')
         .setStyle(ButtonStyle.Danger);
-    var compArr = []
+    var compArr = [] // Used to store all select menus in rows
     for (let j = 0; j < rounds; j++){
         let row = new ActionRowBuilder()
             .addComponents(cardSels[j]);
@@ -287,7 +289,7 @@ module.exports = {
                 } default: return; 
             }
         } else if (interaction.isStringSelectMenu()){
-            // Switch case with the string selects bc API limit
+            // Switch case with the string selects due to several of them (API limit)
             switch(interaction.customId){
                 case('cardChoose1'): case('cardChoose2'): case('cardChoose3'): {
                     await handleCardSelectorTrade(interaction, db); break;

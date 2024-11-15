@@ -2,7 +2,6 @@
 // ? Hide credentials using SHA
 // ? Better file handling on imports
 // TODO: Change resources hosting on SQL database
-// TODO: Open command
 
 // Path handling
 const path = require('node:path');
