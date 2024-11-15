@@ -1,6 +1,6 @@
-var { countCards, queryCards, queryPacks } = require(appRoot + 'src/utils/db/queries')
+var { countCards, queryCards, queryPacks, getCardData } = require(appRoot + 'src/utils/db/queries')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
-const { entries, rarColors, rarEmojis, rarIcons, pacEmojis } = require(appRoot + 'config/properties.json')
+const { entries, rarColors, rarEmojis, rarIcons, pacEmojis, pacColors, pacIcons } = require(appRoot + 'config/properties.json')
 
 // Create a random integer between 2 values (both included)
 exports.randomInt = function(min, max) {
@@ -40,10 +40,30 @@ exports.Rarity = Rarity // For use outside
 
 // Object array for pack emojis
 const Packs = Object.freeze({
-    'Free Pack': pacEmojis.fPack,
-    'Special Pack': pacEmojis.sPack,
-    'Ultra Rare Pack': pacEmojis.urPack,
-    'Exclusive Pack': pacEmojis.ePack,
+    'Free Pack': {
+        id: '1',
+        emoji: pacEmojis.fPack,
+        icons: pacIcons.fPack,
+        color: pacColors.fPack
+    },
+    'Special Pack': {
+        id: '2',
+        emoji: pacEmojis.sPack,
+        icons: pacIcons.sPack,
+        color: pacColors.sPack
+    },
+    'Ultra Rare Pack': {
+        id: '3',
+        emoji: pacEmojis.urPack,
+        icons: pacIcons.urPack,
+        color: pacColors.urPack
+    },
+    'Exclusive Pack': {
+        id: '4',
+        emoji: pacEmojis.ePack,
+        icons: pacIcons.ePack,
+        color: pacColors.ePack
+    }
 })
 exports.Packs = Packs // For use outside
 
@@ -59,7 +79,7 @@ exports.cardsMaxPage = async function(db, uID){
 }
 
 // Set up the button row for cards command
-exports.cardRow = async function(page, maxPage){
+exports.cardRow = function(page, maxPage){
     const next = new ButtonBuilder()
         .setCustomId('cardNext')
         .setEmoji("⏩")
@@ -76,6 +96,21 @@ exports.cardRow = async function(page, maxPage){
     if (page <= 1) {row.components[0].setDisabled(true)}
     if (page >= maxPage) {row.components[1].setDisabled(true)}
     return row;
+}
+
+// Create an embed for the card that is obtained in a pack opening
+exports.packOpenEmbed = async function(db, card, amount){
+    const data = await getCardData(db, card)
+    const cardColor = exports.Rarity[data['card_rarity_id']].color
+    const cardIcon = exports.Rarity[data['card_rarity_id']].icons
+    const strCard = amount == 1 ? `First copy of this card!` : `You now have ${amount} copies of this card.`
+    var embed = new EmbedBuilder()
+        .setTitle(`You just got a __${data['card_name']}__!`)
+        .setDescription(strCard)
+        .setImage(data['card_img_url'])
+        .setColor(cardColor)
+        .setFooter({ text: `ID: ${data['card_id']}` , iconURL: cardIcon})
+    return embed
 }
 
 // Create an embed that will display the cards
@@ -113,7 +148,7 @@ exports.packEmbed = async function(db, titleUser, uID){
     // Loop through the object to get formatted string
     for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
         // Get emoji
-        let packEmoji = Packs[outputQuery[`${i}`].name]
+        let packEmoji = Packs[outputQuery[`${i}`].name].emoji
         // Append to string
         outputStr += `${packEmoji} ${outputQuery[`${i}`].name} x${outputQuery[`${i}`].count}\n`
     }

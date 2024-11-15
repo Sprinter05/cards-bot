@@ -32,7 +32,7 @@ async function handleCardMove(interaction, db) {
 
     // Create row and embed body
     var newEmbed = await cardEmbed(db, dbId, msgTitle, currEmbed.footer.icon_url, page)
-    var newRow = await cardRow(page, maxPage)
+    var newRow = cardRow(page, maxPage)
     
     // Prevent SQL error by going out of range
     if (page <= 1) {newRow.components[0].setDisabled(true)}

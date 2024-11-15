@@ -1,7 +1,7 @@
 const { QueryTypes } = require('sequelize');
 const { scrapes } = require(appRoot + 'config/properties.json')
 const { randomInt } = require(appRoot + 'src/utils/exporter')
-const { checkCardQuantity } = require(appRoot + "src/utils/db/queries");
+const { checkCardQuantity, checkPackQuantity } = require(appRoot + "src/utils/db/queries");
 
 // Create a new Discord user entry in the database
 exports.logUser = async function(database, id){
@@ -12,10 +12,28 @@ exports.logUser = async function(database, id){
     return insertUser;
 }
 
+// Reduces 1 pack quantity on the user (performing a previous check)
+exports.removePack = async function(database, id, pack){
+    const amount = await checkPackQuantity(database, id, pack)
+    // If the user has only one pack we delete the entry
+    if (amount === 1){
+        await database.query(
+            `DELETE FROM user_packs WHERE user_id = ? AND pack_id=(SELECT pack_id FROM packs WHERE pack_name = ?);`,
+            {replacements: [id, pack], type: QueryTypes.DELETE}
+        );
+    } else { // Otherwise we reduce the quantity by 1
+        await database.query(
+            `UPDATE user_packs SET quantity=quantity-1 WHERE user_id = ? AND pack_id=(SELECT pack_id FROM packs WHERE pack_name = ?);`,
+            {replacements: [id, pack], type: QueryTypes.UPDATE}
+        );
+    }
+    return;
+}
+
 // Reduce by 1 the quantity of a user's card
 exports.deleteCard = async function(database, id, card, quantity){
     // If the user has only one we delete the card entry
-    if (quantity === 0){
+    if (quantity === 1){
         await database.query(
             `DELETE FROM user_cards WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
             {replacements: [id, card], type: QueryTypes.DELETE}

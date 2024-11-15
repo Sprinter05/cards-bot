@@ -21,6 +21,15 @@ exports.checkMoney = async function(database, id){
     return money == null ? 0 : money['coins']
 }
 
+// Gets the amount of packs a user has (by name)
+exports.checkPackQuantity = async function(database, id, pack){
+    const pacQuan = await database.query(
+        `SELECT quantity FROM user_packs NATURAL JOIN packs WHERE pack_name = ? AND user_id = ?;`,
+        {replacements: [pack, id], type: QueryTypes.SELECT, plain: true}
+    );
+    return pacQuan === null ? 0 : pacQuan['quantity']
+}
+
 // Gets the amount a user has of a specific card
 exports.checkCardQuantity = async function(database, id, card){
     const queryQuantity = await database.query(

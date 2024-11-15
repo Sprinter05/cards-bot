@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { packInfo, getRarityCardsList, checkCardQuantity, queryPacks, checkUser } = require(appRoot + "src/utils/db/queries");
-const { insertCard } = require(appRoot + 'src/utils/db/manips')
-const { randomInt, Rarity } = require(appRoot + 'src/utils/exporter')
+const { insertCard, removePack } = require(appRoot + 'src/utils/db/manips')
+const { randomInt, Rarity, packOpenEmbed, Packs } = require(appRoot + 'src/utils/exporter')
 
 function rollWithPercentages(nP, rP, urP, sP) {
     const check = randomInt(0, 99) // Percentage
@@ -48,24 +48,37 @@ module.exports = {
         const index = Object.keys(packDb).find(key => packDb[key].id == pack)
         const amount = index === undefined ? 0 : packDb[index].count
         if (amount == 0){ // User has no packs
-            return await interaction.reply(`You don't have any of those type of packs!`);
+            return await interaction.reply(`You don't have any pack of that type!`);
         }
-
-        // Get pack information
+        
+        // Get pack information and show it
+        const pacName = packDb[index].name
         const info = await packInfo(cardsdb, pack)
+        var pacEmbed = new EmbedBuilder()
+            .setTitle(`${Packs[pacName].emoji} Opening a ${pacName}...`)
+            .setColor(Packs[pacName].color)
+
+        await interaction.reply({
+            embeds: [pacEmbed],
+        })
+
         // Repeat for the amount of cards opening the pack
         for (let i = 0; i < info['card_amount']; i++){
             // Get rarity to give
             const rarity = rollWithPercentages(info['normal_percentage'], info['rare_percentage'], info['ultrarare_percentage'], info['special_percentage'])
             // Get list of all available cards and choose at random
             const cardList = await getRarityCardsList(cardsdb, rarity)
-            const rand = randomInt(0, rarity.length - 1)
+            const rand = randomInt(0, cardList.length - 1)
             const retName = cardList[rand]['card_name']
             // Inser depending on existing quantity
-            const quan = await checkCardQuantity(cardsdb, retName, dbId)
+            const quan = await checkCardQuantity(cardsdb, dbId, retName)
             insertCard(cardsdb, dbId, retName, quan) // Only 1 card
+            // Get embed and update open status
+            const embed = await packOpenEmbed(cardsdb, retName, quan + 1)
+            await interaction.followUp({
+                embeds: [embed]
+            })
         }
-        
-        return
+        return removePack(cardsdb, dbId, pacName) // All cards obtained
     }
 }
