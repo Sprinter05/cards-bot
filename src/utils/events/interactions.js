@@ -79,48 +79,23 @@ async function handleAcceptTrade(interaction, db){
     // Otherwise make a menu for the user to choose the card to trade
     const reqDbId = (await checkUser(db, reqId))['user_id']
     const cardJSON = await getAllCards(db, reqDbId)
-    const cardSelect = new StringSelectMenuBuilder()
-        .setCustomId('cardChoose')
-        .setPlaceholder('Choose a card!')
-    var cardSelect2, cardSelect3 // In case theyre used
+    var cardSels = [];
     // Discord API limit (25 elements)
-    const thresh = cardJSON.length > 25 ? 25 : cardJSON.length
+    const rounds = Math.ceil(cardJSON.length / 25)
     // Adding each card the user has
-    for(let i=0; i<thresh; i++){
-        cardSelect.addOptions(
-            new StringSelectMenuOptionBuilder()
+    for (let j = 1; j <= rounds; j++){
+        let cardSelect = new StringSelectMenuBuilder()
+            .setCustomId(`cardChoose${j}`)
+            .setPlaceholder('Choose a card!')
+        let thresh = cardJSON.length < j * 25 ? cardJSON.length : j * 25
+        for(let i = (j-1) * 25; i < thresh; i++){
+            cardSelect.addOptions(
+                new StringSelectMenuOptionBuilder()
                 .setLabel(cardJSON[i]['card_name'])
                 .setValue(cardJSON[i]['card_name']),
-        )
-    }
-    // ? I think this is the best way to handle the API limit ngl
-    if (cardJSON.length > 25){
-        cardSelect2 = new StringSelectMenuBuilder()
-            .setCustomId('cardChoose2')
-            .setPlaceholder('Choose a card!')
-        // Discord API limit (25 elements)
-        const thresh2 = cardJSON.length > 50 ? 50 : cardJSON.length
-        // Adding each card the user has
-        for(let i=25; i<thresh2; i++){
-            cardSelect2.addOptions(
-                new StringSelectMenuOptionBuilder()
-                    .setLabel(cardJSON[i]['card_name'])
-                    .setValue(cardJSON[i]['card_name']),
             )
         }
-    }
-    if (cardJSON.length > 50){
-        cardSelect3 = new StringSelectMenuBuilder()
-            .setCustomId('cardChoose3')
-            .setPlaceholder('Choose a card!')
-        // Adding each card the user has
-        for(let i=50; i<cardJSON.length; i++){
-            cardSelect3.addOptions(
-                new StringSelectMenuOptionBuilder()
-                    .setLabel(cardJSON[i]['card_name'])
-                    .setValue(cardJSON[i]['card_name']),
-            )
-        }
+        cardSels.push(cardSelect)
     }
 
     // Embed buttons, rows and body
@@ -128,19 +103,15 @@ async function handleAcceptTrade(interaction, db){
         .setCustomId('denyTrade')
         .setLabel('Cancel')
         .setStyle(ButtonStyle.Danger);
-    const row = new ActionRowBuilder()
-        .addComponents(cardSelect);
-    var row2, row3 // API moment
-    if (cardJSON.length > 25){
-        row2 = new ActionRowBuilder()
-            .addComponents(cardSelect2);
-    }
-    if (cardJSON.length > 50){
-        row3 = new ActionRowBuilder()
-            .addComponents(cardSelect3);
+    var compArr = []
+    for (let j = 0; j < rounds; j++){
+        let row = new ActionRowBuilder()
+            .addComponents(cardSels[j]);
+        compArr.push(row)
     }
     const btonRow = new ActionRowBuilder()
         .addComponents(cancelBton);
+    compArr.push(btonRow)
     var newEmbed = new EmbedBuilder()
         .setTitle(`Choose a card ${interaction.user.username}!`)
         .setColor('277F4A')
@@ -149,10 +120,6 @@ async function handleAcceptTrade(interaction, db){
         .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
         .setImage(embed.image.url)
 
-    var compArr; // To see how many rows we need
-    if (cardJSON.length > 50) compArr = [row, row2, row3, btonRow]
-    else if (cardJSON.length > 25) compArr = [row, row2, btonRow]
-    else compArr = [row, btonRow]
     // Update trade status
     await interaction.update({
         embeds: [newEmbed],
@@ -322,7 +289,7 @@ module.exports = {
         } else if (interaction.isStringSelectMenu()){
             // Switch case with the string selects bc API limit
             switch(interaction.customId){
-                case('cardChoose'): case('cardChoose2'): case('cardChoose3'): {
+                case('cardChoose1'): case('cardChoose2'): case('cardChoose3'): {
                     await handleCardSelectorTrade(interaction, db); break;
                 } default: return;
             }
