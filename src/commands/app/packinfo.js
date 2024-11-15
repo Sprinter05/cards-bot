@@ -23,6 +23,7 @@ module.exports = {
     async execute(interaction, cardsdb){
         var pack = interaction.options.getString('pack');
         var embed = new EmbedBuilder()
+        // Switch case with info on every existing pack
         switch(pack){
             case '1':
                 embed.setTitle(`${pacEmojis.fPack} Free Pack`)
@@ -52,6 +53,7 @@ module.exports = {
             default:
                 break;
         }
+        // Get percentages on specified pack
         const packDatum = await packInfo(cardsdb, parseInt(pack))
         embed.addFields(
             { name: `${cEmoji} Price:`, value: packDatum['price'].toString() },

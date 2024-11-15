@@ -9,6 +9,7 @@ module.exports = {
         const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true })
         var ping = sent.createdTimestamp - interaction.createdTimestamp
         var latency = interaction.client.ws.ping
+        
         // Update ping response with latency
         await interaction.editReply(`Pong! 🏓\nTook: ${ping}ms\nAPI: ${latency}ms`)
     }

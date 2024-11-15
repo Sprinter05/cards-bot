@@ -15,10 +15,12 @@ module.exports = {
         ),
     // Main function
     async execute(interaction, cardsdb){
+        // If user is not specified use the person that ran the command
         const user = interaction.options.getUser('user') ?? interaction.user;
         const queryId = await checkUser(cardsdb, user.id)
         const dbId = queryId === null ? -1 : queryId['user_id']
 
+        // Check if user has no packs
         const pCount = await countPacks(cardsdb, dbId) ?? 0
         if (pCount <= 0){
             if (user.id === interaction.user.id) await interaction.reply("You don't have any packs!");
@@ -26,6 +28,7 @@ module.exports = {
             return;
         }
 
+        // Create embed with the user packs
         const msgEqId = interaction.user.id === user.id ? 0 : user.username
         var embed = await packEmbed(cardsdb, msgEqId, dbId)
 

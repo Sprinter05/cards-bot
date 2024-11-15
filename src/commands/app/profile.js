@@ -15,18 +15,22 @@ module.exports = {
         ),
     // Main function
     async execute(interaction, cardsdb){
+        // If user is not specified use the person that ran the command
         const user = interaction.options.getUser('user') ?? interaction.user;
         const queryId = await checkUser(cardsdb, user.id)
         const dbId = queryId === null ? -1 : queryId['user_id']
 
+        // Get all stats for the specified user
         const money = await checkMoney(cardsdb, dbId) ?? 0
         const nCards = await countCards(cardsdb, dbId, 1) ?? 0
         const rCards = await countCards(cardsdb, dbId, 2) ?? 0
         const urCards = await countCards(cardsdb, dbId, 3) ?? 0
         const sCards = await countCards(cardsdb, dbId, 4) ?? 0
+        // Only show special cards if the user has them
         const speString = sCards === 0 ? '' : `\n${rarEmojis.sCard} Special x${sCards}`
         var cString = `${rarEmojis.nCard} Normal x${nCards}\n${rarEmojis.rCard} Rare x${rCards}\n${rarEmojis.urCard} Ultra Rare x${urCards}${speString}`
 
+        // Create embed with information
         var embed = new EmbedBuilder()
             .setAuthor({name: `${user.username}`, iconURL: user.avatarURL()})
             .setThumbnail('https://mario.wiki.gallery/images/5/59/PMCS_Mario_Cards.png')

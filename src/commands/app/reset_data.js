@@ -8,10 +8,12 @@ module.exports = {
         .setDescription ("Reset ALL data from a user"),
     // Main function
     async execute(interaction, cardsdb){
+        // Get the initial information embed
         var embed = new EmbedBuilder()
             .setDescription("⚠️ **WARNING:**\nThis will reset all your data from this bot (cards, packs, etc.). Once done you can't recover that data, do you wish to continue?")
             .setColor("#FCE300")
 
+        // All interactions are handled by this function
         const row = ddDataRow()
 
         await interaction.reply({

@@ -22,16 +22,20 @@ module.exports = {
         ),
     // Main function
     async execute(interaction, cardsdb){
+        // If user is not specified use the person that ran the command
         const user = interaction.options.getUser('user') ?? interaction.user;
+        // Get database entry and page for the user
         const queryId = await checkUser(cardsdb, user.id)
         const dbId = queryId === null ? -1 : queryId['user_id']
         var page = interaction.options.getInteger('page') ?? 1;
 
+        // Check if the user has no cards
         if ((await countCards(cardsdb, dbId)) <= 0){
             if (user.id === interaction.user.id) return await interaction.reply("You don't have any cards!");
             else return await interaction.reply(`${user.username} doesn't have any cards!`);
         }
 
+        // Create response
         const msgEqId = interaction.user.id === user.id ? 0 : user.username
         var maxPage = await cardsMaxPage(cardsdb, dbId)
         var row = await cardRow(page, maxPage)

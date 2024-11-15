@@ -5,6 +5,8 @@ var { cEmoji } = require(appRoot + 'config/properties.json');
 
 module.exports = {
     // Define data to export to Discord
+    // This works with subcommands instead of arguments
+    // It shows as 2 different commands
     data: new SlashCommandBuilder()
         .setName('scrape')
         .setDescription ("Scrape duplicate cards")
@@ -38,13 +40,18 @@ module.exports = {
         ),
     // Main function
     async execute(interaction, cardsdb){
+        // Get database information on the user
         const queryId = await checkUser(cardsdb, interaction.user.id)
         const dbId = queryId === null ? -1 : queryId['user_id']
-        if (await checkDupes(cardsdb, dbId) === false && interaction.options.getSubcommand() === 'collection') return await interaction.reply("You have no duplicate cards!")
+        // If we are scraping a collection we check if the user has duplicates
+        if (await checkDupes(cardsdb, dbId) === false && interaction.options.getSubcommand() === 'collection') 
+            return await interaction.reply("You have no duplicate cards!")
         
+        // Get the card type to scrape if its a collection or the single card otherwise
         var arg = ''
         if (interaction.options.getSubcommand() === 'collection') arg = interaction.options.getString('type')
         else arg = interaction.options.getString('card')
+        // Switch case with all possible options that updates money accordingly
         switch(arg){
             case 'normal':
                 let nMoney = await scrapeCollection(cardsdb, dbId, 1)
@@ -77,7 +84,7 @@ module.exports = {
                 updateMoney(cardsdb, dbId, tMoney)
                 await interaction.reply(`Scraped all duplicate cards for **${tMoney}** ${cEmoji}`)
                 break;
-            default:
+            default: // Scraping a specific card if the user has it
                 let dMoney = await scrapeCard(cardsdb, dbId, arg)
                 if (dMoney === -1) return await interaction.reply(`You don't have that card!`)
                 updateMoney(cardsdb, dbId, dMoney)

@@ -10,6 +10,7 @@ async function handleCardMove(interaction, db) {
         await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
         return;
     }
+
     // Get user information
     var currEmbed = interaction.message.embeds[0].data
     // uID is the person running the command, userID is the target user
@@ -18,20 +19,25 @@ async function handleCardMove(interaction, db) {
     // To check what user to index
     const chkDbId = (await checkUser(db, uId))['user_id']
     const dbId = (await checkUser(db, userId))['user_id']
+
     // Go back or next
     var offset = 0;
     if(interaction.customId === 'cardNext'){offset = 1}
     else if(interaction.customId === 'cardPrev'){offset = -1}
+
     // Get embed parameters
     const msgTitle = dbId === chkDbId ? 0 : currEmbed.title.replace('These are ', '').replace(`'s cards:`, '')
     const page = parseInt(currEmbed.footer.text.replace('Page ',''))+offset
     const maxPage = await cardsMaxPage(db, dbId)
+
     // Create row and embed body
     var newEmbed = await cardEmbed(db, dbId, msgTitle, currEmbed.footer.icon_url, page)
     var newRow = await cardRow(page, maxPage)
+    
     // Prevent SQL error by going out of range
     if (page <= 1) {newRow.components[0].setDisabled(true)}
     if (page >= maxPage) {newRow.components[1].setDisabled(true)}
+
     // Update cards listed
     await interaction.update({
         embeds: [newEmbed],
@@ -50,6 +56,7 @@ async function handleAcceptTrade(interaction, db){
         await interaction.reply({ content: "This trade request is not for you!", ephemeral: true });
         return;
     }
+
     // Handle the card that the user who requested wants
     if(embed.fields[1].value !== 'None'){
         // Card og is the sender and trade is the requested
@@ -68,6 +75,7 @@ async function handleAcceptTrade(interaction, db){
         })
         return
     }
+
     // Otherwise make a menu for the user to choose the card to trade
     const reqDbId = (await checkUser(db, reqId))['user_id']
     const cardJSON = await getAllCards(db, reqDbId)
@@ -82,6 +90,7 @@ async function handleAcceptTrade(interaction, db){
                 .setValue(cardJSON[i]['card_name']),
         )
     }
+
     // Embed buttons, rows and body
     const cancelBton = new ButtonBuilder()
         .setCustomId('denyTrade')
@@ -98,6 +107,7 @@ async function handleAcceptTrade(interaction, db){
         .setFooter({ text: `Trade accepted!` , iconURL: interaction.user.avatarURL()})
         .setAuthor({ name: embed.author.name, iconURL: embed.author.icon_url})
         .setImage(embed.image.url)
+
     // Update trade status
     await interaction.update({
         embeds: [newEmbed],
@@ -116,6 +126,7 @@ async function handleConfirmTrade(interaction, db){
         await interaction.reply({ content: "You are not the user that has to confirm this trade!", ephemeral: true });
         return;
     }
+
     // Database 1 is the person requesting and Database 2 is the person requested
     const dbOne = (await checkUser(db, sentId))['user_id']
     const dbTwo = (await checkUser(db, reqId))['user_id']
@@ -123,6 +134,7 @@ async function handleConfirmTrade(interaction, db){
     const cardOne = cards[0].replace(cards[0].split(" ")[0], '').replace(" ", '')
     const cardTwo = cards[1].replace(cards[1].split(" ")[0], '').replace(" ", '')
     tradeCards(db, dbOne, dbTwo, cardOne, cardTwo) // Apply DB changes
+
     // Update trade status
     embed.footer.text = `Trade completed!`
     await interaction.update({
@@ -140,11 +152,13 @@ async function handleDenyTrade(interaction, db){
     const reqId = interaction.message.embeds[0].data.footer.icon_url.split("/")[4]
     const sentId = interaction.message.embeds[0].data.author.icon_url.split("/")[4]
     embed.footer.text = `Trade cancelled by ${interaction.user.username}`
+
     // Cannot deny a trade not directed at you
     if (interaction.user.id !== reqId && interaction.user.id !== sentId) {
         await interaction.reply({ content: "You cannot cancel a trade that you are not part of!", ephemeral: true });
         return;
     }
+
     // Update trade status
     await interaction.update({
         embeds: [embed],
@@ -163,6 +177,7 @@ async function handleCardSelectorTrade(interaction, db){
         await interaction.reply({ content: "You cannot interact with a trade that is not directed to you!", ephemeral: true });
         return;
     }
+
     // Value has been chosen so we query database
     const givenCard = interaction.values[0]
     const queryCard = await getCardData(db, givenCard)
@@ -173,11 +188,13 @@ async function handleCardSelectorTrade(interaction, db){
     const ogCardEmoji = cardStr.split(" ")[0]
     const tradeCardEmoji = Rarity[queryCard['card_rarity_id']].emoji
     const embedString = `${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${givenCard}`
+
     // You cannot trade the same card for the same card
     if (givenCard === ogCard){
         await interaction.reply({ content: "You cannot offer the same card that you would get!", ephemeral: true })
         return
     }
+
     // Create the confirmation embed
     const newEmbed = tradeConfirmEmbed(embed, embedString, queryCard['card_img_url'])
     const newRow = tradeConfirmRow()
@@ -195,6 +212,7 @@ async function handleCancelDataReset(interaction, db){
         await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
         return;
     }
+
     // Update reset status
     await interaction.update({
         components: []
@@ -210,6 +228,7 @@ async function handleConfirmDataReset(interaction, db){
         await interaction.reply({ content: "You cannot interact with a command you did not send!", ephemeral: true });
         return;
     }
+
     // Get user's database
     const userId = interaction.user.id
     const dbId = (await checkUser(db, userId))['user_id']
@@ -222,6 +241,7 @@ async function handleConfirmDataReset(interaction, db){
         // End reset
         return await interaction.followUp("All your data has been reset.")
     }
+    
     // Create warning for the user
     const newRow = ddDataRow()
     var newEmbed = new EmbedBuilder()
