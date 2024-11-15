@@ -115,7 +115,7 @@ async function handleAcceptTrade(interaction, db){
             .setPlaceholder('Choose a card!')
         // Adding each card the user has
         for(let i=50; i<cardJSON.length; i++){
-            cardSelect2.addOptions(
+            cardSelect3.addOptions(
                 new StringSelectMenuOptionBuilder()
                     .setLabel(cardJSON[i]['card_name'])
                     .setValue(cardJSON[i]['card_name']),
