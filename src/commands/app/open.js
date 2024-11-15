@@ -1,6 +1,20 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-const { pacColors, pacEmojis, pacIcons, rarEmojis, cEmoji } = require(appRoot + 'config/properties.json');
-const { packInfo } = require(appRoot + "src/utils/db/queries");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { packInfo, getRarityCardsList, checkCardQuantity, queryPacks, checkUser } = require(appRoot + "src/utils/db/queries");
+const { insertCard } = require(appRoot + 'src/utils/db/manips')
+const { randomInt, Rarity } = require(appRoot + 'src/utils/exporter')
+
+function rollWithPercentages(nP, rP, urP, sP) {
+    const check = randomInt(0, 99) // Percentage
+    var findObj = '' // Rarity to find
+    // Get percentages as ranges from 0 to 100
+    const normal = nP, rare = nP + rP, ultrarare = nP + rP + urP, special = nP + rP + urP + sP
+    if (check >= 0 && check < normal) findObj = 'Normal'
+    else if (check >= normal && check < rare) findObj = 'Rare'
+    else if (check >= rare && check < ultrarare) findObj = 'Ultra Rare'
+    else if (check >= ultrarare && check < special) findObj = 'Special'
+    // Get rarity ID from name
+    return Object.keys(Rarity).find(key => Rarity[key].tag === findObj)
+}
 
 module.exports = {
     // Define data to export to Discord
@@ -21,7 +35,37 @@ module.exports = {
         ),
     // Main function
     async execute(interaction, cardsdb){
-        var pack = interaction.options.getString('pack');
-                
+        const pack = interaction.options.getString('pack')
+        
+        // Get user information
+        const user = interaction.user;
+        // Get database entry and page for the user
+        const queryId = await checkUser(cardsdb, user.id)
+        const dbId = queryId['user_id'] // Bot should have already registered the user
+        
+        // Check if the user has the specified pack
+        const packDb = await queryPacks(cardsdb, dbId)
+        const index = Object.keys(packDb).find(key => packDb[key].id == pack)
+        const amount = index === undefined ? 0 : packDb[index].count
+        if (amount == 0){ // User has no packs
+            return await interaction.reply(`You don't have any of those type of packs!`);
+        }
+
+        // Get pack information
+        const info = await packInfo(cardsdb, pack)
+        // Repeat for the amount of cards opening the pack
+        for (let i = 0; i < info['card_amount']; i++){
+            // Get rarity to give
+            const rarity = rollWithPercentages(info['normal_percentage'], info['rare_percentage'], info['ultrarare_percentage'], info['special_percentage'])
+            // Get list of all available cards and choose at random
+            const cardList = await getRarityCardsList(cardsdb, rarity)
+            const rand = randomInt(0, rarity.length - 1)
+            const retName = cardList[rand]['card_name']
+            // Inser depending on existing quantity
+            const quan = await checkCardQuantity(cardsdb, retName, dbId)
+            insertCard(cardsdb, dbId, retName, quan) // Only 1 card
+        }
+        
+        return
     }
 }

@@ -21,6 +21,15 @@ exports.checkMoney = async function(database, id){
     return money == null ? 0 : money['coins']
 }
 
+// Gets the amount a user has of a specific card
+exports.checkCardQuantity = async function(database, id, card){
+    const queryQuantity = await database.query(
+        `SELECT quantity FROM user_cards NATURAL JOIN cards WHERE card_name = ? AND user_id = ?;`,
+        {replacements: [card, id], type: QueryTypes.SELECT, plain: true}
+    );
+    return queryQuantity === null ? 0 : queryQuantity['quantity']
+}
+
 // Counts the amount of cards a user has (this is used to check if it has no cards) 
 exports.countCards = async function(database, id, rarity){
     var countCards = 0;
@@ -88,6 +97,14 @@ exports.getCardData = async function(database, card){
     return cardInfo;
 }
 
+exports.getRarityCardsList = async function(database, rarity){
+    const cards = await database.query(
+        `SELECT card_name FROM cards WHERE card_rarity_id = ?`,
+        {replacements: [rarity], type: QueryTypes.SELECT}
+    )
+    return cards;
+}
+
 // Used for the card choosing in trades, gets all cards a user has by name
 exports.getAllCards = async function(database, id){
     const cards = await database.query(
@@ -120,7 +137,7 @@ exports.countPacks = async function(database, id){
 // Get all packs a user has
 exports.queryPacks = async function(database, id){
     const userPacks = await database.query(
-        `SELECT pack_name, quantity FROM user_packs NATURAL JOIN packs WHERE user_id = ?;`,
+        `SELECT pack_name, pack_id, quantity FROM user_packs NATURAL JOIN packs WHERE user_id = ?;`,
         {replacements: [id], type: QueryTypes.SELECT}
     );
     // ? Put all results into a JSON object
@@ -128,6 +145,7 @@ exports.queryPacks = async function(database, id){
     for(var i = 0; i < userPacks.length; i++){
         outputJson[`${i}`] = {}
         outputJson[`${i}`].name = userPacks[i]['pack_name']
+        outputJson[`${i}`].id = userPacks[i]['pack_id']
         outputJson[`${i}`].count = userPacks[i]['quantity']
     }
     return outputJson;

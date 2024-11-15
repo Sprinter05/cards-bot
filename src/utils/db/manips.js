@@ -1,12 +1,7 @@
 const { QueryTypes } = require('sequelize');
 const { scrapes } = require(appRoot + 'config/properties.json')
-
-// Create a random integer between 2 values
-exports.randomInt = function(min, max) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
-}  
+const { randomInt } = require(appRoot + 'src/utils/exporter')
+const { checkCardQuantity } = require(appRoot + "src/utils/db/queries");
 
 // Create a new Discord user entry in the database
 exports.logUser = async function(database, id){
@@ -20,7 +15,7 @@ exports.logUser = async function(database, id){
 // Reduce by 1 the quantity of a user's card
 exports.deleteCard = async function(database, id, card, quantity){
     // If the user has only one we delete the card entry
-    if (quantity === 1){
+    if (quantity === 0){
         await database.query(
             `DELETE FROM user_cards WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
             {replacements: [id, card], type: QueryTypes.DELETE}
@@ -34,7 +29,7 @@ exports.deleteCard = async function(database, id, card, quantity){
     return;
 }
 
-// Add a new card to the user's database
+// Add a new card to the user's database (quantity represents how many the user already has)
 exports.insertCard = async function(database, id, card, quantity){
     // If the user has no cards we create the entry 
     if (quantity === 0){
@@ -65,7 +60,7 @@ exports.scrapeCard = async function(database, id, card){
     // Remove a card from the user's database
     exports.deleteCard(database, id, card, quantity)
     // Give some random money in exchange bounded by the rarity
-    const scrapeMoney = exports.randomInt(scrapes[`${rarity}`].min, scrapes[`${rarity}`].max)
+    const scrapeMoney = randomInt(scrapes[`${rarity}`].min, scrapes[`${rarity}`].max)
     return scrapeMoney;
 }
 
@@ -99,32 +94,17 @@ exports.updateMoney = async function(database, id, mon){
 // Trade a card between two users
 exports.tradeCards = async function(database, id1, id2, card1, card2){
     // Query one is the one requesting trade, query two is the one we are trading with
-    const queryOne = await database.query(
-        `SELECT quantity FROM user_cards NATURAL JOIN cards WHERE card_name = ? AND user_id = ?;`,
-        {replacements: [card1, id1], type: QueryTypes.SELECT, plain: true}
-    );
-    const queryTwo = await database.query(
-        `SELECT quantity FROM user_cards NATURAL JOIN cards WHERE card_name = ? AND user_id = ?;`,
-        {replacements: [card2, id2], type: QueryTypes.SELECT, plain: true}
-    );
+    const qOne = await checkCardQuantity(database, id1, card1)
+    const qTwo = await checkCardQuantity(database, id2, card2)
     // Delete the origin card from both users with the queried quantity
-    exports.deleteCard(database, id1, card1, queryOne['quantity'])
-    exports.deleteCard(database, id2, card2, queryTwo['quantity'])
+    exports.deleteCard(database, id1, card1, qOne)
+    exports.deleteCard(database, id2, card2, qTwo)
     // Get the card's status for the card we are exchanging per user
-    const queryThree = await database.query(
-        `SELECT quantity FROM user_cards NATURAL JOIN cards WHERE card_name = ? AND user_id = ?;`,
-        {replacements: [card2, id1], type: QueryTypes.SELECT, plain: true}
-    );
-    const queryFour = await database.query(
-        `SELECT quantity FROM user_cards NATURAL JOIN cards WHERE card_name = ? AND user_id = ?;`,
-        {replacements: [card1, id2], type: QueryTypes.SELECT, plain: true}
-    );
-    // Quantity each user has
-    const quantityT1 = queryThree === null ? 0 : queryThree['quantity']
-    const quantityT2 = queryFour === null ? 0 : queryFour['quantity']
+    const qThree = await checkCardQuantity(database, id1, card2)
+    const qFour = await checkCardQuantity(database, id2, card1)
     // Give the traded card to the user
-    exports.insertCard(database, id1, card2, quantityT1)
-    exports.insertCard(database, id2, card1, quantityT2)
+    exports.insertCard(database, id1, card2, qThree)
+    exports.insertCard(database, id2, card1, qFour)
     return;
 }
 

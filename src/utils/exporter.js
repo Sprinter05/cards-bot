@@ -2,24 +2,35 @@ var { countCards, queryCards, queryPacks } = require(appRoot + 'src/utils/db/que
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
 const { entries, rarColors, rarEmojis, rarIcons, pacEmojis } = require(appRoot + 'config/properties.json')
 
+// Create a random integer between 2 values (both included)
+exports.randomInt = function(min, max) {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+}  
+
 // Object array for getting card values
 const Rarity = Object.freeze({
     '1': { // Normal
+        tag: 'Normal',
         color: rarColors.nCard,
         emoji: rarEmojis.nCard,
         icons: rarIcons.nCard
     },
     '2': { // Rare
+        tag: 'Rare',
         color: rarColors.rCard,
         emoji: rarEmojis.rCard,
         icons: rarIcons.rCard
     },
     '3': { // Ultra Rare
+        tag: 'Ultra Rare',
         color: rarColors.urCard,
         emoji: rarEmojis.urCard,
         icons: rarIcons.urCard
     },
     '4': { // Special
+        tag: 'Special',
         color: rarColors.sCard,
         emoji: rarEmojis.sCard,
         icons: rarIcons.sCard
