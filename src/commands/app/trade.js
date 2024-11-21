@@ -38,9 +38,9 @@ module.exports = {
 
         // Get card given in exchange and if the one requesting wants any specific cards
         var cardTTOne = interaction.options.getString('card');
-        const queryCard = await getCardData(cardsdb, cardTTOne)
+        const queryCard = await getCardData(cardsdb, cardTTOne, false)
         var cardReq = interaction.options.getString('request')
-        const queryRCard = cardReq !== null ? await getCardData(cardsdb, cardReq) : 0
+        const queryRCard = cardReq !== null ? await getCardData(cardsdb, cardReq, false) : 0
 
         // Cannot request and give the same card in exchange
         if (cardReq === cardTTOne){

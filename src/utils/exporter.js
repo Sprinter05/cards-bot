@@ -100,7 +100,7 @@ exports.cardRow = function(page, maxPage){
 
 // Create an embed for the card that is obtained in a pack opening
 exports.packOpenEmbed = async function(db, card, amount){
-    const data = await getCardData(db, card)
+    const data = await getCardData(db, card, false)
     const cardColor = exports.Rarity[data['card_rarity_id']].color
     const cardIcon = exports.Rarity[data['card_rarity_id']].icons
     const strCard = amount == 1 ? `First copy of this card!` : `You now have ${amount} copies of this card.`

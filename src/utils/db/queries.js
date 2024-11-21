@@ -98,11 +98,19 @@ exports.checkDupes = async function(database, id) {
 }
 
 // Get all data about a card
-exports.getCardData = async function(database, card){
-    const cardInfo = await database.query(
-        `SELECT card_id, card_name, card_rarity_id, card_img_url FROM cards WHERE card_name = ?;`,
-        {replacements: [card], type: QueryTypes.SELECT, plain: true}
-    )
+exports.getCardData = async function(database, card, useId){
+    var cardInfo;
+    if (useId == false){
+        cardInfo = await database.query(
+            `SELECT card_id, card_name, card_rarity_id, card_img_url FROM cards WHERE card_name = ?;`,
+            {replacements: [card], type: QueryTypes.SELECT, plain: true}
+        )
+    } else {
+        cardInfo = await database.query(
+            `SELECT card_id, card_name, card_rarity_id, card_img_url FROM cards WHERE card_id = ?;`,
+            {replacements: [card], type: QueryTypes.SELECT, plain: true}
+        )
+    }
     return cardInfo;
 }
 

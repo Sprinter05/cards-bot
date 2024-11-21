@@ -7,17 +7,37 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('viewcard')
         .setDescription ("This command is to view an existing card from the database.")
-        .addStringOption(option =>
-	      option
-            .setName('card')
-			.setDescription('The card you want to lookup')
-			.setRequired(true)
-        ),
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('search-name')
+                .setDescription('Search by name')
+                .addStringOption(option =>
+                  option
+                    .setName('card')
+                    .setDescription('The name you want to lookup')
+                    .setRequired(true)
+                )
+            )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('search-id')
+                .setDescription('Search by card ID')
+                .addIntegerOption(option =>
+                  option
+                    .setName('id')
+                    .setDescription('The id you want to lookup')
+                    .setRequired(true)
+                    .setMinValue(1) //! Modify if more cards added
+                    .setMaxValue(60) //! Modify if more cards added
+                )
+        ),            
     // Main function
     async execute(interaction, cardsdb){
         // Get information about the card to check
-        const cardName = interaction.options.getString('card');
-        const outputCard = await getCardData(cardsdb, cardName)
+        const opts = interaction.options // Abbreviation
+        const cardName = opts.getSubcommand() == 'search-name' ? opts.getString('card') : opts.getInteger('id')
+        const outputCard = opts.getSubcommand() == 'search-name' ?
+            await getCardData(cardsdb, cardName, false) : await getCardData(cardsdb, cardName, true)
         // Card does not exist
         if (outputCard === null){
             await interaction.reply("This card could not be found!")

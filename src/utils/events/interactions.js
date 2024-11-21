@@ -65,7 +65,7 @@ async function handleAcceptTrade(interaction, db){
         // Get embed parameters and update trade status
         const embedStr = `${ogCard} ⇔ ${tradeCard}`
         const cardNoEmoji =tradeCard.replace(tradeCard.split(" ")[0], '').replace(" ", '')
-        const infoCard = await getCardData(db, cardNoEmoji)
+        const infoCard = await getCardData(db, cardNoEmoji, false)
         const redirectEmbed = tradeConfirmEmbed(embed, embedStr, infoCard['card_img_url'])
         const redirectRow = tradeConfirmRow()
         // Update trade status
@@ -194,7 +194,7 @@ async function handleCardSelectorTrade(interaction, db){
 
     // Value has been chosen so we query database
     const givenCard = interaction.values[0]
-    const queryCard = await getCardData(db, givenCard)
+    const queryCard = await getCardData(db, givenCard, false)
     // Create embed
     var embed = interaction.message.embeds[0].data
     const cardStr = embed.description.replace("Trading for ", '')
