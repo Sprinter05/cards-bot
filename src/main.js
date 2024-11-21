@@ -1,7 +1,7 @@
 // ? Remove JSON object on queries
 // ? Hide credentials using SHA
 // ? Better file handling on imports
-// TODO: Change resources hosting on SQL database
+// TODO: Make VPS links for card images
 
 // Path handling
 const path = require('node:path');
