@@ -30,6 +30,12 @@ module.exports = {
         // Get user to trade with and user requesting trade
         const userToTrade = interaction.options.getUser('user');
         const user = interaction.user;
+        // Check that the Discord IDs are different
+        if (userToTrade.id === user.id){
+            await interaction.reply({ content: "You cannot trade with yourself!", ephemeral: true })
+            return
+        }
+
         // Query database information
         const userQueryId = await checkUser(cardsdb, user.id)
         const userTTQueryId = await checkUser(cardsdb, userToTrade.id)
