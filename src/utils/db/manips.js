@@ -30,6 +30,23 @@ exports.removePack = async function(database, id, pack){
     return;
 }
 
+// Adds a pack to a user's database (previous check performed)
+exports.addPack = async function(database, id, pack, quantity){
+    const amount = await checkPackQuantity(database, id, pack)
+    if (amount === 0){ // Insert new pack
+        await database.query(
+            `INSERT INTO user_packs(user_id, pack_id, quantity) VALUES (?, (SELECT pack_id FROM packs WHERE pack_name = ?), ?);`,
+            {replacements: [id, pack, quantity], type: QueryTypes.DELETE}
+        );
+    } else { // Otherwise we increase the quantity by 1
+        await database.query(
+            `UPDATE user_packs SET quantity=quantity + ? WHERE user_id = ? AND pack_id=(SELECT pack_id FROM packs WHERE pack_name = ?);`,
+            {replacements: [quantity, id, pack], type: QueryTypes.UPDATE}
+        );
+    }
+    return;
+}
+
 // Reduce by 1 the quantity of a user's card
 exports.deleteCard = async function(database, id, card, quantity){
     // If the user has only one we delete the card entry

@@ -49,7 +49,7 @@ module.exports = {
         
         // Get the card type to scrape if its a collection or the single card otherwise
         const opts = interaction.options // Abbreviation
-        const arg = opts.getSubcommand() === 'collection' ? arg = interaction.options.getString('type') : interaction.options.getString('card')
+        const arg = opts.getSubcommand() === 'collection' ? interaction.options.getString('type') : interaction.options.getString('card')
         // Switch case with all possible options that updates money accordingly
         switch(arg){
             case 'normal':

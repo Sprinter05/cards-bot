@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { Packs } = require("../../utils/exporter");
-var { packInfo } = require(appRoot + 'src/utils/db/queries')
-var { scrapeCard, scrapeCollection, updateMoney } = require(appRoot + 'src/utils/db/manips')
+var { packInfo, checkMoney, checkUser } = require(appRoot + 'src/utils/db/queries')
+var { updateMoney, addPack } = require(appRoot + 'src/utils/db/manips')
 var { cEmoji } = require(appRoot + 'config/properties.json');
 
 module.exports = {
@@ -24,12 +24,18 @@ module.exports = {
                       .setDescription('Pack to buy')
                       .setRequired(true)
                       .addChoices(
-                        {name: 'Free Pack', value: '1'},
                         {name: 'Special Pack', value: '2'},
                         {name: 'Ultra Rare Pack', value: '3'},
                         {name: 'Exclusive Pack', value: '4'},
                     )
-            )
+                )
+                .addIntegerOption(option =>
+                    option
+                      .setName('amount')
+                      .setDescription('How many packs you want to buy')
+                      .setRequired(false)
+                      .setMinValue(1)
+                )
         ),
     // Main function
     async execute(interaction, cardsdb){
@@ -47,7 +53,7 @@ module.exports = {
             embed.setThumbnail('https://www.models-resource.com/resources/big_icons/70/69837.png?updated=1717226909')
 
             // Packs to buy
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 2; i <= 4; i++) {
                 const info = await packInfo(cardsdb, i);    
                 const name = Object.keys(Packs).find(key => Packs[key].id === i.toString())          
                 const emoji = Packs[name].emoji
@@ -60,6 +66,34 @@ module.exports = {
             await interaction.reply({
                 embeds: [embed],
             })
+        } else {
+            // Pack to buy
+            const pack = interaction.options.getString('pack');
+            const amount = interaction.options.getInteger('amount') ?? 1
+            // User database
+            const user = interaction.user;
+            const queryId = await checkUser(cardsdb, user.id)
+            const dbId = queryId['user_id'] // Bot should have already registered the user    
+            
+            // Get price information about the pack
+            const money = await checkMoney(cardsdb, dbId);
+            const info = await packInfo(cardsdb, pack)
+            const name = Object.keys(Packs).find(key => Packs[key].id === pack)
+            const total = info['price'] * amount
+
+            // Not enough money to buy
+            if (money < total) {
+                await interaction.reply({ 
+                    content: `You don't have enough money to buy that! You need ${total} ${cEmoji}!`, 
+                    ephemeral: true 
+                })
+                return
+            }
+            
+            // Modify the user's money and add the pack to their database
+            updateMoney(cardsdb, dbId, -total)
+            addPack(cardsdb, dbId, name, amount)
+            return await interaction.reply(`Successfully bought x${amount} ${name}!`)
         }
     }
 }
