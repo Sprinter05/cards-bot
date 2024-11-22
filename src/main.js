@@ -1,7 +1,8 @@
 // ? Remove JSON object on queries
 // ? Hide credentials using SHA
 // ? Better file handling on imports
-// TODO: Make VPS links for card images
+// TODO: Shop command
+// TODO: Battle command
 
 // Path handling
 const path = require('node:path');
