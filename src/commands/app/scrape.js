@@ -48,9 +48,8 @@ module.exports = {
             return await interaction.reply("You have no duplicate cards!")
         
         // Get the card type to scrape if its a collection or the single card otherwise
-        var arg = ''
-        if (interaction.options.getSubcommand() === 'collection') arg = interaction.options.getString('type')
-        else arg = interaction.options.getString('card')
+        const opts = interaction.options // Abbreviation
+        const arg = opts.getSubcommand() === 'collection' ? arg = interaction.options.getString('type') : interaction.options.getString('card')
         // Switch case with all possible options that updates money accordingly
         switch(arg){
             case 'normal':

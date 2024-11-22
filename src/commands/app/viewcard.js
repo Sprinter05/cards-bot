@@ -35,8 +35,8 @@ module.exports = {
     async execute(interaction, cardsdb){
         // Get information about the card to check
         const opts = interaction.options // Abbreviation
-        const cardName = opts.getSubcommand() == 'search-name' ? opts.getString('card') : opts.getInteger('id')
-        const outputCard = opts.getSubcommand() == 'search-name' ?
+        const cardName = opts.getSubcommand() === 'search-name' ? opts.getString('card') : opts.getInteger('id')
+        const outputCard = opts.getSubcommand() === 'search-name' ?
             await getCardData(cardsdb, cardName, false) : await getCardData(cardsdb, cardName, true)
         // Card does not exist
         if (outputCard === null){
