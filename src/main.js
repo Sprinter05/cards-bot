@@ -53,7 +53,8 @@ const cardsdb = new Sequelize(database.dbName, database.dbUser, database.dbPswd,
 cardsdb.authenticate().then(() => {
     console.log('Connection has been established successfully.');
 }).catch((error) => {
-    console.error('Unable to connect to the database: ', error);
+    console.error('Unable to connect to the database!\n', error);
+	return process.exit(1)
 });
 
 // Setup client and config
