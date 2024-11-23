@@ -32,7 +32,7 @@ module.exports = {
 
         // Get completion percentage
         const missingCards = await checkMissingCards(cardsdb, dbId)
-        const missingLength = missingCards === null ? 0 : Object.keys(missingCards).length
+        const missingLength = Object.keys(missingCards).length
         const completionPerc = 100 - Math.round(missingLength * 100 / cardsMax)
 
         // Create embed with information

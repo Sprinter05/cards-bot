@@ -16,14 +16,14 @@ module.exports = {
         
         // Get all missing cards for a user
         const missing = await checkMissingCards(cardsdb, dbId)
-        if (missing === null){
+        const max = Object.keys(missing).length
+        if (max === 0){
             return await interaction.reply(
                 `Congratulations! You already have all existing cards! :partying_face:`, 
             )
         } else {
             // Get card data for all missing cards
             var missingStr = ''
-            const max = Object.keys(missing).length
             for (let i = 0; i < max; i++){
                 const name = missing[i].card_name
                 const cardData = await getCardData(cardsdb, name, false)
@@ -33,7 +33,7 @@ module.exports = {
 
             // Put everything into an emebd and display it
             var embed = new EmbedBuilder()
-                .setTitle(`You are missing ${max} cards:`)
+                .setTitle(`You are missing ${max} card(s):`)
                 .setDescription(missingStr)
                 .setColor('#18E6E6')
 
