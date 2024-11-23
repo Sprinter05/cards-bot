@@ -10,6 +10,7 @@ exports.randomInt = function(min, max) {
 }  
 
 // Object array for getting card values
+//! Modify if more added
 const Rarity = Object.freeze({
     '1': { // Normal
         tag: 'Normal',
@@ -39,6 +40,7 @@ const Rarity = Object.freeze({
 exports.Rarity = Rarity // For use outside
 
 // Object array for pack emojis
+//! Modify if more added
 const Packs = Object.freeze({
     'Free Pack': {
         id: '1',

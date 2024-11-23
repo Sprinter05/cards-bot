@@ -1,6 +1,7 @@
 // ? ES Modules
 // ? Some properties json to database
 // TODO: Card selling
+// TODO: Improve info embed
 // TODO: Battle command
 
 // Path handling

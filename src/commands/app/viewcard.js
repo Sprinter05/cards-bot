@@ -29,7 +29,7 @@ module.exports = {
                     .setDescription('The id you want to lookup')
                     .setRequired(true)
                     .setMinValue(1)
-                    .setMaxValue(cardsMax) //! Modify if more cards added
+                    .setMaxValue(cardsMax)
                 )
         ),            
     // Main function
