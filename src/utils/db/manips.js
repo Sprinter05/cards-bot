@@ -1,5 +1,5 @@
 const { QueryTypes } = require('sequelize');
-const { scrapes, fpCooldown } = require(appRoot + 'config/properties.json')
+const { fpCooldown } = require(appRoot + 'config/properties.json')
 const { randomInt } = require(appRoot + 'src/utils/exporter')
 const { checkCardQuantity, checkPackQuantity } = require(appRoot + "src/utils/db/queries");
 
@@ -107,7 +107,11 @@ exports.scrapeCard = async function(database, id, card){
     // Remove a card from the user's database
     exports.deleteCard(database, id, card, quantity)
     // Give some random money in exchange bounded by the rarity
-    const scrapeMoney = randomInt(scrapes[`${rarity}`].min, scrapes[`${rarity}`].max)
+    const scrapeQuery = await database.query(
+        `SELECT scrape_min, scrape_max FROM cards_rarity WHERE card_rarity_id = ?;`,
+        {replacements: [rarity], type: QueryTypes.SELECT, plain: true}
+    );
+    const scrapeMoney = randomInt(scrapeQuery['scrape_min'], scrapeQuery['scrape_max'])
     return scrapeMoney;
 }
 

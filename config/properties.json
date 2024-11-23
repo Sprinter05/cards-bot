@@ -1,24 +1,6 @@
 {
     "entries": 10,
     "fpCooldown": 86400,
-    "scrapes": {
-        "1": {
-            "min": 10,
-            "max": 25
-        },
-        "2": {
-            "min": 30,
-            "max": 50
-        },
-        "3": {
-            "min": 80,
-            "max": 120
-        },
-        "4": {
-            "min": 200,
-            "max": 350
-        }
-    },
     "cEmoji": "<:coin:1214561654629728326>",
     "logoURL": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/logo.png?inline=true",
     "pacEmojis": {
