@@ -12,6 +12,15 @@ exports.getCardCount = async function(database){
     return countCards['COUNT(card_id)']
 }
 
+// Get the amount of existing packs
+exports.getPackCount = async function(database){
+    const countPacks = await database.query(
+        `SELECT COUNT(pack_id) from packs;`,
+        {type: QueryTypes.SELECT, plain: true}
+    );
+    return countPacks['COUNT(pack_id)']
+}
+
 // Checks if a user exists in the database
 exports.checkUser = async function(database, discordId){
     const userExist = await database.query(
@@ -78,7 +87,7 @@ exports.countCards = async function(database, id, rarity){
 // Query all info about a pack, including percentages
 exports.packInfo = async function(database, pId){
     const packData = database.query(
-        `SELECT card_amount, price, normal_percentage, rare_percentage, ultrarare_percentage, special_percentage FROM packs WHERE pack_id = ?;`,
+        `SELECT pack_name, card_amount, price, normal_percentage, rare_percentage, ultrarare_percentage, special_percentage, color, icon, emoji FROM packs WHERE pack_id = ?;`,
         {replacements: [pId], type: QueryTypes.SELECT, plain: true}
     )
     return packData

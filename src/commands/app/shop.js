@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { Packs } = require("../../utils/exporter");
-var { packInfo, checkMoney, checkUser } = require(appRoot + 'src/utils/db/queries')
+var { packInfo, checkMoney, checkUser, getPackCount } = require(appRoot + 'src/utils/db/queries')
 var { updateMoney, addPack } = require(appRoot + 'src/utils/db/manips')
 var { cEmoji } = require(appRoot + 'config/properties.json');
 
@@ -53,11 +52,11 @@ module.exports = {
             embed.setThumbnail('https://www.models-resource.com/resources/big_icons/70/69837.png?updated=1717226909')
 
             // Packs to buy
-            const packLength = Object.keys(Packs).length
-            for (let i = 2; i <= packLength; i++) {
-                const info = await packInfo(cardsdb, i);    
-                const name = Object.keys(Packs).find(key => Packs[key].id === i.toString())          
-                const emoji = Packs[name].emoji
+            const packLength = await getPackCount(cardsdb)
+            for (let i = 2; i <= packLength; i++) { // Skip Free Pack (id 1)
+                const info = await packInfo(cardsdb, i);           
+                const emoji = info['emoji']
+                const name = info['pack_name']
                 embed.addFields(
                     { name: `${emoji} ${name}:`, value: `${info['price'].toString()} ${cEmoji}`}
                 )
@@ -79,7 +78,7 @@ module.exports = {
             // Get price information about the pack
             const money = await checkMoney(cardsdb, dbId);
             const info = await packInfo(cardsdb, pack)
-            const name = Object.keys(Packs).find(key => Packs[key].id === pack)
+            const name = info['pack_name']
             const total = info['price'] * amount
 
             // Not enough money to buy

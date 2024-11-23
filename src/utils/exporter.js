@@ -1,4 +1,4 @@
-var { countCards, queryCards, queryPacks, getCardData } = require(appRoot + 'src/utils/db/queries')
+var { countCards, queryCards, queryPacks, getCardData, packInfo } = require(appRoot + 'src/utils/db/queries')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
 const { entries, rarColors, rarEmojis, rarIcons, pacEmojis, pacColors, pacIcons } = require(appRoot + 'config/properties.json')
 
@@ -38,36 +38,6 @@ const Rarity = Object.freeze({
     }
 })
 exports.Rarity = Rarity // For use outside
-
-// Object array for pack emojis
-//! Modify if more added
-const Packs = Object.freeze({
-    'Free Pack': {
-        id: '1',
-        emoji: pacEmojis.fPack,
-        icons: pacIcons.fPack,
-        color: pacColors.fPack
-    },
-    'Special Pack': {
-        id: '2',
-        emoji: pacEmojis.sPack,
-        icons: pacIcons.sPack,
-        color: pacColors.sPack
-    },
-    'Ultra Rare Pack': {
-        id: '3',
-        emoji: pacEmojis.urPack,
-        icons: pacIcons.urPack,
-        color: pacColors.urPack
-    },
-    'Exclusive Pack': {
-        id: '4',
-        emoji: pacEmojis.ePack,
-        icons: pacIcons.ePack,
-        color: pacColors.ePack
-    }
-})
-exports.Packs = Packs // For use outside
 
 // Return the highest page that can be displayed
 exports.cardsMaxPage = async function(db, uID){
@@ -150,7 +120,8 @@ exports.packEmbed = async function(db, titleUser, uID){
     // Loop through the object to get formatted string
     for(let i = 0; i <= Object.keys(outputQuery).length-1; i++){
         // Get emoji
-        let packEmoji = Packs[outputQuery[i].pack_name].emoji
+        const info = await packInfo(db, outputQuery[i].pack_id);  
+        let packEmoji = info['emoji']
         // Append to string
         outputStr += `${packEmoji} ${outputQuery[i].pack_name} x${outputQuery[i].quantity}\n`
     }

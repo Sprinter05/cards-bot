@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { packInfo, getRarityCardsList, checkCardQuantity, queryPacks, checkUser } = require(appRoot + "src/utils/db/queries");
 const { insertCard, removePack } = require(appRoot + 'src/utils/db/manips')
-const { randomInt, Rarity, packOpenEmbed, Packs } = require(appRoot + 'src/utils/exporter')
+const { randomInt, Rarity, packOpenEmbed } = require(appRoot + 'src/utils/exporter')
 
 function rollWithPercentages(nP, rP, urP, sP) {
     const check = randomInt(0, 99) // Percentage
@@ -55,8 +55,8 @@ module.exports = {
         const pacName = packDb[index].pack_name
         const info = await packInfo(cardsdb, pack)
         var pacEmbed = new EmbedBuilder()
-            .setTitle(`${Packs[pacName].emoji} Opening a __${pacName}__...`)
-            .setColor(Packs[pacName].color)
+            .setTitle(`${info['emoji']} Opening a __${pacName}__...`)
+            .setColor(info['color'])
 
         await interaction.reply({
             embeds: [pacEmbed],

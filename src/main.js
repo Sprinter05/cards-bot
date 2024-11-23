@@ -1,5 +1,5 @@
 // ? ES Modules
-// ? Some properties json to database
+// ! No hard coding packs
 // TODO: Card selling
 // TODO: Improve info embed
 // TODO: Battle command
