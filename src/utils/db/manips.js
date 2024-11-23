@@ -10,11 +10,11 @@ exports.logUser = async function(database, id){
         {replacements: [id, tmstamp], type: QueryTypes.INSERT}
     );
     const newDbId = insertUser[0]
-    await database.query( // Insert user info
+    database.query( // Insert user info
         `INSERT INTO user_cooldowns(user_id, pack_id, unix_stamp) VALUES (?, 1, ?);`,
         {replacements: [newDbId, tmstamp], type: QueryTypes.INSERT}
     );
-    return insertUser;
+    return;
 }
 
 // Updates when the new Free Pack will be available
@@ -25,7 +25,7 @@ exports.newFreePackCooldown = async function(database, id){
         {type: QueryTypes.DELETE, plain: true}
     );
     const newStamp = stamp + cooldown['cooldown'] // Wait x amount of time
-    await database.query(
+    database.query(
         `UPDATE user_cooldowns SET unix_stamp = ? WHERE user_id = ? AND pack_id = 1;`,
         {replacements: [newStamp, id], type: QueryTypes.DELETE}
     );
@@ -37,12 +37,12 @@ exports.removePack = async function(database, id, pack){
     const amount = await checkPackQuantity(database, id, pack)
     // If the user has only one pack we delete the entry
     if (amount === 1){
-        await database.query(
+        database.query(
             `DELETE FROM user_packs WHERE user_id = ? AND pack_id=(SELECT pack_id FROM packs WHERE pack_name = ?);`,
             {replacements: [id, pack], type: QueryTypes.DELETE}
         );
     } else { // Otherwise we reduce the quantity by 1
-        await database.query(
+        database.query(
             `UPDATE user_packs SET quantity=quantity-1 WHERE user_id = ? AND pack_id=(SELECT pack_id FROM packs WHERE pack_name = ?);`,
             {replacements: [id, pack], type: QueryTypes.UPDATE}
         );
@@ -54,12 +54,12 @@ exports.removePack = async function(database, id, pack){
 exports.addPack = async function(database, id, pack, quantity){
     const amount = await checkPackQuantity(database, id, pack)
     if (amount === 0){ // Insert new pack
-        await database.query(
+        database.query(
             `INSERT INTO user_packs(user_id, pack_id, quantity) VALUES (?, (SELECT pack_id FROM packs WHERE pack_name = ?), ?);`,
             {replacements: [id, pack, quantity], type: QueryTypes.DELETE}
         );
     } else { // Otherwise we increase the quantity by 1
-        await database.query(
+        database.query(
             `UPDATE user_packs SET quantity=quantity + ? WHERE user_id = ? AND pack_id=(SELECT pack_id FROM packs WHERE pack_name = ?);`,
             {replacements: [quantity, id, pack], type: QueryTypes.UPDATE}
         );
@@ -71,12 +71,12 @@ exports.addPack = async function(database, id, pack, quantity){
 exports.deleteCard = async function(database, id, card, quantity){
     // If the user has only one we delete the card entry
     if (quantity === 1){
-        await database.query(
+        database.query(
             `DELETE FROM user_cards WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
             {replacements: [id, card], type: QueryTypes.DELETE}
         );
     } else { // Otherwise we reduce the quantity by 1
-        await database.query(
+        database.query(
             `UPDATE user_cards SET quantity=quantity-1 WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
             {replacements: [id, card], type: QueryTypes.UPDATE}
         );
@@ -88,12 +88,12 @@ exports.deleteCard = async function(database, id, card, quantity){
 exports.insertCard = async function(database, id, card, quantity){
     // If the user has no cards we create the entry 
     if (quantity === 0){
-        await database.query(
+        database.query(
             `INSERT INTO user_cards(user_id, card_id, quantity) VALUES (?, (SELECT card_id FROM cards WHERE card_name = ?), 1);`,
             {replacements: [id, card], type: QueryTypes.DELETE}
         );
     } else { // Otherwise we update the quantity by 1
-        await database.query(
+        database.query(
             `UPDATE user_cards SET quantity=quantity+1 WHERE user_id = ? AND card_id=(SELECT card_id FROM cards WHERE card_name = ?);`,
             {replacements: [id, card], type: QueryTypes.UPDATE}
         );
@@ -143,11 +143,11 @@ exports.scrapeCollection = async function(database, id, rarity){
 
 // Update's a user's money
 exports.updateMoney = async function(database, id, mon){
-    const moreMon = await database.query(
+    database.query(
         `UPDATE users SET coins=coins + ? WHERE user_id = ?;`,
         {replacements: [mon, id], type: QueryTypes.UPDATE}
     )
-    return moreMon;
+    return;
 }
 
 // Trade a card between two users
