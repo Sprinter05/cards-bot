@@ -122,7 +122,7 @@ exports.cardEmbed = async function(db, dbId, titleUser, userIcon, page){
     var outputQuery = await queryCards(db, dbId, page)
     var outputStr = ''
     // Loop through all the keys on the objects and turn them into a formatted string
-    for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
+    for(let i = 0; i <= Object.keys(outputQuery).length-1; i++){
         // Get the card rarity
         let rarityEmoji = exports.Rarity[outputQuery[i].card_rarity_id].emoji
         let countCard = '' // Card amount
@@ -146,7 +146,7 @@ exports.packEmbed = async function(db, titleUser, uID){
     var outputQuery = await queryPacks(db, uID)
     var outputStr = ''
     // Loop through the object to get formatted string
-    for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
+    for(let i = 0; i <= Object.keys(outputQuery).length-1; i++){
         // Get emoji
         let packEmoji = Packs[outputQuery[i].pack_name].emoji
         // Append to string

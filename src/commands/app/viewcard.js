@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
 var { getCardData, checkCardOwn, checkUser } = require(appRoot + 'src/utils/db/queries')
 var { Rarity } = require(appRoot + 'src/utils/exporter')
+const { cardsMax } = require(appRoot + 'config/properties.json');
 
 module.exports = {
     // Define data to export to Discord
@@ -27,8 +28,8 @@ module.exports = {
                     .setName('id')
                     .setDescription('The id you want to lookup')
                     .setRequired(true)
-                    .setMinValue(1) //! Modify if more cards added
-                    .setMaxValue(60) //! Modify if more cards added
+                    .setMinValue(1)
+                    .setMaxValue(cardsMax) //! Modify if more cards added
                 )
         ),            
     // Main function

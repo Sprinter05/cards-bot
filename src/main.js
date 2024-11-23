@@ -1,5 +1,6 @@
 // ? ES Modules
-// TODO: Completion command
+// ? Some properties json to database
+// TODO: Card selling
 // TODO: Battle command
 
 // Path handling
@@ -10,7 +11,6 @@ globalThis.appRoot = path.resolve(__dirname, '..') + '/'; // Before src
 const { Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
 const { checkUser } = require(appRoot + 'src/utils/db/queries')
 const { logUser } = require(appRoot + 'src/utils/db/manips')
-
 
 // npm packages
 const fs = require('fs');

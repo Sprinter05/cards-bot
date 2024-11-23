@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-var { checkMoney, countCards, checkUser } = require(appRoot + 'src/utils/db/queries')
-var { rarEmojis, cEmoji } = require(appRoot + 'config/properties.json');
+var { checkMoney, countCards, checkUser, checkMissingCards } = require(appRoot + 'src/utils/db/queries')
+var { rarEmojis, cEmoji, cardsMax } = require(appRoot + 'config/properties.json');
 
 module.exports = {
     // Define data to export to Discord
@@ -30,6 +30,11 @@ module.exports = {
         const speString = sCards === 0 ? '' : `\n${rarEmojis.sCard} Special x${sCards}`
         var cString = `${rarEmojis.nCard} Normal x${nCards}\n${rarEmojis.rCard} Rare x${rCards}\n${rarEmojis.urCard} Ultra Rare x${urCards}${speString}`
 
+        // Get completion percentage
+        const missingCards = await checkMissingCards(cardsdb, dbId)
+        const missingLength = missingCards === null ? 0 : Object.keys(missingCards).length
+        const completionPerc = 100 - Math.round(missingLength * 100 / cardsMax)
+
         // Create embed with information
         var embed = new EmbedBuilder()
             .setAuthor({name: `${user.username}`, iconURL: user.avatarURL()})
@@ -38,6 +43,7 @@ module.exports = {
             .addFields(
                 { name: '**Money:**', value: `${cEmoji} ${money}` },
                 { name: '**Cards:**', value: cString },
+                { name: '**Completion:**', value: `${completionPerc}% cards obtained` },
             )
             .setFooter({text: `Cards-Bot`, iconURL: interaction.client.user.avatarURL()})
 

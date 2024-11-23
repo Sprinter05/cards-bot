@@ -139,9 +139,16 @@ exports.checkCardOwn = async function(database, id, cardId){
         `SELECT card_id FROM user_cards WHERE card_id = ? AND user_id = ?;`,
         {replacements: [cardId, id], type: QueryTypes.SELECT, plain: true}
     )
-    if (ownCheck === null){
-        return false
-    } else {return true}
+    return ownCheck === null ? false : true
+}
+
+// Get all missing cards for a user
+exports.checkMissingCards = async function(database, id){
+    const missing = await database.query(
+        `SELECT card_name FROM cards WHERE card_id NOT IN (SELECT card_id FROM user_cards WHERE user_id = ?);`,
+        {replacements: [id], type: QueryTypes.SELECT}
+    )
+    return missing
 }
 
 // Counts the amount of packs a user has (this is to check if it has no packs)
