@@ -22,12 +22,12 @@ exports.newFreePackCooldown = async function(database, id){
     const stamp = Date.now() / 1000 // Current time
     const cooldown = await database.query( // Query cooldown
         `SELECT cooldown FROM packs WHERE pack_id = 1;`,
-        {type: QueryTypes.DELETE, plain: true}
+        {type: QueryTypes.SELECT, plain: true}
     );
     const newStamp = stamp + cooldown['cooldown'] // Wait x amount of time
     database.query(
         `UPDATE user_cooldowns SET unix_stamp = ? WHERE user_id = ? AND pack_id = 1;`,
-        {replacements: [newStamp, id], type: QueryTypes.DELETE}
+        {replacements: [newStamp, id], type: QueryTypes.UPDATE}
     );
     return newStamp;
 }
@@ -56,7 +56,7 @@ exports.addPack = async function(database, id, pack, quantity){
     if (amount === 0){ // Insert new pack
         database.query(
             `INSERT INTO user_packs(user_id, pack_id, quantity) VALUES (?, (SELECT pack_id FROM packs WHERE pack_name = ?), ?);`,
-            {replacements: [id, pack, quantity], type: QueryTypes.DELETE}
+            {replacements: [id, pack, quantity], type: QueryTypes.INSERT}
         );
     } else { // Otherwise we increase the quantity by 1
         database.query(
@@ -90,7 +90,7 @@ exports.insertCard = async function(database, id, card, quantity){
     if (quantity === 0){
         database.query(
             `INSERT INTO user_cards(user_id, card_id, quantity) VALUES (?, (SELECT card_id FROM cards WHERE card_name = ?), 1);`,
-            {replacements: [id, card], type: QueryTypes.DELETE}
+            {replacements: [id, card], type: QueryTypes.INSERT}
         );
     } else { // Otherwise we update the quantity by 1
         database.query(
