@@ -3,6 +3,15 @@ const { entries } = require(appRoot + 'config/properties.json');
 
 //! Queries shoule never use SELECT *
 
+// Get the amount of existing cards
+exports.getCardCount = async function(database){
+    const countCards = await database.query(
+        `SELECT COUNT(card_id) from cards;`,
+        {type: QueryTypes.SELECT, plain: true}
+    );
+    return countCards['COUNT(card_id)']
+}
+
 // Checks if a user exists in the database
 exports.checkUser = async function(database, discordId){
     const userExist = await database.query(

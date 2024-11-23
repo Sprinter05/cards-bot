@@ -1,6 +1,5 @@
 {
     "entries": 10,
-    "cardsMax": 60,
     "fpCooldown": 86400,
     "scrapes": {
         "1": {

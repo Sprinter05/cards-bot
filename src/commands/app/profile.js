@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-var { checkMoney, countCards, checkUser, checkMissingCards } = require(appRoot + 'src/utils/db/queries')
+var { checkMoney, countCards, checkUser, checkMissingCards, getCardCount } = require(appRoot + 'src/utils/db/queries')
 var { rarEmojis, cEmoji, cardsMax } = require(appRoot + 'config/properties.json');
 
 module.exports = {
@@ -33,6 +33,7 @@ module.exports = {
         // Get completion percentage
         const missingCards = await checkMissingCards(cardsdb, dbId)
         const missingLength = Object.keys(missingCards).length
+        const cardsMax = await getCardCount(cardsdb)
         const completionPerc = 100 - Math.round(missingLength * 100 / cardsMax)
 
         // Create embed with information
