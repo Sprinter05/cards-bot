@@ -53,7 +53,8 @@ module.exports = {
             embed.setThumbnail('https://www.models-resource.com/resources/big_icons/70/69837.png?updated=1717226909')
 
             // Packs to buy
-            for (let i = 2; i <= 4; i++) {
+            const packLength = Object.keys(Packs).length
+            for (let i = 2; i <= packLength; i++) {
                 const info = await packInfo(cardsdb, i);    
                 const name = Object.keys(Packs).find(key => Packs[key].id === i.toString())          
                 const emoji = Packs[name].emoji

@@ -1,7 +1,5 @@
-// ? Remove JSON object on queries
-// ? Hide credentials using SHA
-// ? Better file handling on imports
-// TODO: Free Pack command
+// ? ES Modules
+// TODO: Completion command
 // TODO: Battle command
 
 // Path handling

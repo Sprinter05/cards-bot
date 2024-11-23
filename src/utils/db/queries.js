@@ -82,15 +82,7 @@ exports.queryCards = async function(database, id, page) {
         `SELECT card_name, card_rarity_id, quantity FROM user_cards NATURAL JOIN cards WHERE user_id = ? LIMIT ? OFFSET ?;`,
         {replacements: [id, entries, offset], type: QueryTypes.SELECT}
     );
-    // ? Put all cards into a JSON object
-    var outputJson = {};
-    for(var i = 0; i < userCards.length; i++){
-        outputJson[`${i}`] = {}
-        outputJson[`${i}`].name = userCards[i]['card_name']
-        outputJson[`${i}`].rarity = userCards[i]['card_rarity_id']
-        outputJson[`${i}`].count = userCards[i]['quantity']
-    }
-    return outputJson;
+    return userCards;
 }
 
 // Checks if a user has a single card or more
@@ -123,6 +115,7 @@ exports.getCardData = async function(database, card, useId){
     return cardInfo;
 }
 
+// Get all cards of a certain rarity
 exports.getRarityCardsList = async function(database, rarity){
     const cards = await database.query(
         `SELECT card_name FROM cards WHERE card_rarity_id = ?`,
@@ -166,13 +159,5 @@ exports.queryPacks = async function(database, id){
         `SELECT pack_name, pack_id, quantity FROM user_packs NATURAL JOIN packs WHERE user_id = ?;`,
         {replacements: [id], type: QueryTypes.SELECT}
     );
-    // ? Put all results into a JSON object
-    var outputJson = {};
-    for(var i = 0; i < userPacks.length; i++){
-        outputJson[`${i}`] = {}
-        outputJson[`${i}`].name = userPacks[i]['pack_name']
-        outputJson[`${i}`].id = userPacks[i]['pack_id']
-        outputJson[`${i}`].count = userPacks[i]['quantity']
-    }
-    return outputJson;
+    return userPacks;
 }

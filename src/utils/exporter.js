@@ -124,11 +124,11 @@ exports.cardEmbed = async function(db, dbId, titleUser, userIcon, page){
     // Loop through all the keys on the objects and turn them into a formatted string
     for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
         // Get the card rarity
-        let rarityEmoji = exports.Rarity[outputQuery[`${i}`].rarity].emoji
+        let rarityEmoji = exports.Rarity[outputQuery[i].card_rarity_id].emoji
         let countCard = '' // Card amount
-        if (outputQuery[`${i}`].count !== 1) {countCard = `x${outputQuery[`${i}`].count}`}
+        if (outputQuery[i].quantity !== 1) {countCard = `x${outputQuery[i].quantity}`}
         // Append to string
-        outputStr += `${rarityEmoji} ${outputQuery[`${i}`].name} ${countCard}\n`
+        outputStr += `${rarityEmoji} ${outputQuery[i].card_name} ${countCard}\n`
     }
     // Send formatted embed
     const title = titleUser === 0 ? `These are your cards:` : `These are ${titleUser}'s cards:`
@@ -148,9 +148,9 @@ exports.packEmbed = async function(db, titleUser, uID){
     // Loop through the object to get formatted string
     for(let i = 0; i<= Object.keys(outputQuery).length-1; i++){
         // Get emoji
-        let packEmoji = Packs[outputQuery[`${i}`].name].emoji
+        let packEmoji = Packs[outputQuery[i].pack_name].emoji
         // Append to string
-        outputStr += `${packEmoji} ${outputQuery[`${i}`].name} x${outputQuery[`${i}`].count}\n`
+        outputStr += `${packEmoji} ${outputQuery[i].pack_name} x${outputQuery[i].quantity}\n`
     }
     // Send formatted embed
     const title = titleUser === 0 ? `These are your packs:` : `These are ${titleUser}'s packs:`

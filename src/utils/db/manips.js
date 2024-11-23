@@ -121,8 +121,8 @@ exports.scrapeCollection = async function(database, id, rarity){
     if (nQuery.length === 0) return -1
     // Get all money to give back in exchange
     var totalMoney = 0
-    for(let i=0; i<nQuery.length; i++){
-        for(let j=0; j<(nQuery[i]['quantity']-1); j++){
+    for(let i = 0; i < nQuery.length; i++){
+        for(let j = 0; j < (nQuery[i]['quantity']-1); j++){
             totalMoney += await exports.scrapeCard(database, id, nQuery[i]['card_name'])
         }
     }

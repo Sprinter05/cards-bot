@@ -45,14 +45,14 @@ module.exports = {
         
         // Check if the user has the specified pack
         const packDb = await queryPacks(cardsdb, dbId)
-        const index = Object.keys(packDb).find(key => packDb[key].id == pack)
-        const amount = index === undefined ? 0 : packDb[index].count
+        const index = Object.keys(packDb).find(key => packDb[key].pack_id == pack)
+        const amount = index === undefined ? 0 : packDb[index].quantity
         if (amount == 0){ // User has no packs
             return await interaction.reply(`You don't have any pack of that type!`);
         }
         
         // Get pack information and show it
-        const pacName = packDb[index].name
+        const pacName = packDb[index].pack_name
         const info = await packInfo(cardsdb, pack)
         var pacEmbed = new EmbedBuilder()
             .setTitle(`${Packs[pacName].emoji} Opening a __${pacName}__...`)
