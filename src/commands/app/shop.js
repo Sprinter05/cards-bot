@@ -84,7 +84,7 @@ module.exports = {
             // Not enough money to buy
             if (money < total) {
                 await interaction.reply({ 
-                    content: `You don't have enough money to buy that! You need ${total} ${cEmoji}!`, 
+                    content: `You don't have enough money to buy that! You need **${total}** ${cEmoji}!`, 
                     ephemeral: true 
                 })
                 return
@@ -93,7 +93,7 @@ module.exports = {
             // Modify the user's money and add the pack to their database
             updateMoney(cardsdb, dbId, -total)
             addPack(cardsdb, dbId, name, amount)
-            return await interaction.reply(`Successfully bought x${amount} ${name}!`)
+            return await interaction.reply(`Successfully bought x${amount} **${name}**!`)
         }
     }
 }

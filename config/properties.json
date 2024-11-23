@@ -1,5 +1,6 @@
 {
     "entries": 10,
+    "fpCooldown": 86400,
     "scrapes": {
         "1": {
             "min": 10,

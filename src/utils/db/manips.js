@@ -1,15 +1,27 @@
 const { QueryTypes } = require('sequelize');
-const { scrapes } = require(appRoot + 'config/properties.json')
+const { scrapes, fpCooldown } = require(appRoot + 'config/properties.json')
 const { randomInt } = require(appRoot + 'src/utils/exporter')
 const { checkCardQuantity, checkPackQuantity } = require(appRoot + "src/utils/db/queries");
 
 // Create a new Discord user entry in the database
 exports.logUser = async function(database, id){
+    const tmstamp = Date.now() / 1000 // Instant Free Pack available when registrating
     const insertUser = await database.query(
-        `INSERT INTO users(discord_id, coins) VALUES (?, 100);`,
-        {replacements: [id], type: QueryTypes.INSERT}
+        `INSERT INTO users(discord_id, coins, free_pack_cooldown) VALUES (?, 100, ?);`,
+        {replacements: [id, tmstamp], type: QueryTypes.INSERT}
     );
     return insertUser;
+}
+
+// Updates when the new Free Pack will be available
+exports.newFreePackCooldown = async function(database, id){
+    const stamp = Date.now() / 1000 // Current time
+    const newStamp = stamp + fpCooldown // Wait x amount of time
+    await database.query(
+        `UPDATE users SET free_pack_cooldown = ? WHERE user_id = ?;`,
+        {replacements: [newStamp, id], type: QueryTypes.DELETE}
+    );
+    return newStamp;
 }
 
 // Reduces 1 pack quantity on the user (performing a previous check)

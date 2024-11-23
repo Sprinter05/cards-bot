@@ -55,7 +55,7 @@ module.exports = {
         const pacName = packDb[index].name
         const info = await packInfo(cardsdb, pack)
         var pacEmbed = new EmbedBuilder()
-            .setTitle(`${Packs[pacName].emoji} Opening a ${pacName}...`)
+            .setTitle(`${Packs[pacName].emoji} Opening a __${pacName}__...`)
             .setColor(Packs[pacName].color)
 
         await interaction.reply({

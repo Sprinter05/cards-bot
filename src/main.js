@@ -1,7 +1,7 @@
 // ? Remove JSON object on queries
 // ? Hide credentials using SHA
 // ? Better file handling on imports
-// TODO: Shop command
+// TODO: Free Pack command
 // TODO: Battle command
 
 // Path handling
