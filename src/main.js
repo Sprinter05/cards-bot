@@ -9,7 +9,7 @@ const path = require('node:path');
 globalThis.appRoot = path.resolve(__dirname, '..') + '/'; // Before src
 
 // Discord and command imports
-const { Client, Collection, Events, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { checkUser } = require(appRoot + 'src/utils/db/queries')
 const { logUser } = require(appRoot + 'src/utils/db/manips')
 

@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
 var { checkMoney, countCards, checkUser, checkMissingCards, getCardCount } = require(appRoot + 'src/utils/db/queries')
-var { rarEmojis, cEmoji, cardsMax } = require(appRoot + 'config/properties.json');
+var { rarEmojis, cEmoji } = require(appRoot + 'config/properties.json');
 
 module.exports = {
     // Define data to export to Discord

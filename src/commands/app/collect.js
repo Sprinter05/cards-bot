@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 var { getFreePackCooldown, checkUser } = require(appRoot + 'src/utils/db/queries')
 var { newFreePackCooldown, addPack } = require(appRoot + 'src/utils/db/manips')
 
@@ -28,7 +28,7 @@ module.exports = {
         const dbId = queryId['user_id'] // Bot should have already registered the user    
         
         // Get when the user can open a new free pack
-        const timestamp = (await getFreePackCooldown(cardsdb, dbId))['free_pack_cooldown']
+        const timestamp = await getFreePackCooldown(cardsdb, dbId)
         const currStamp = Date.now() / 1000
         
         if (currStamp >= timestamp){

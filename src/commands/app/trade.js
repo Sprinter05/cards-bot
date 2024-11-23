@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionCollector  } = require("discord.js")
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle  } = require("discord.js")
 var { Rarity } = require(appRoot + 'src/utils/exporter')
 var { countCards, checkUser, getCardData, checkCardOwn } = require(appRoot + 'src/utils/db/queries')
 

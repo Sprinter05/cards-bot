@@ -1,14 +1,18 @@
 const { QueryTypes } = require('sequelize');
-const { fpCooldown } = require(appRoot + 'config/properties.json')
 const { randomInt } = require(appRoot + 'src/utils/exporter')
 const { checkCardQuantity, checkPackQuantity } = require(appRoot + "src/utils/db/queries");
 
 // Create a new Discord user entry in the database
 exports.logUser = async function(database, id){
     const tmstamp = Date.now() / 1000 // Instant Free Pack available when registrating
-    const insertUser = await database.query(
-        `INSERT INTO users(discord_id, coins, free_pack_cooldown) VALUES (?, 100, ?);`,
+    const insertUser = await database.query( // Insert user info
+        `INSERT INTO users(discord_id, coins) VALUES (?, 100);`,
         {replacements: [id, tmstamp], type: QueryTypes.INSERT}
+    );
+    const newDbId = insertUser[0]
+    await database.query( // Insert user info
+        `INSERT INTO user_cooldowns(user_id, pack_id, unix_stamp) VALUES (?, 1, ?);`,
+        {replacements: [newDbId, tmstamp], type: QueryTypes.INSERT}
     );
     return insertUser;
 }
@@ -16,9 +20,13 @@ exports.logUser = async function(database, id){
 // Updates when the new Free Pack will be available
 exports.newFreePackCooldown = async function(database, id){
     const stamp = Date.now() / 1000 // Current time
-    const newStamp = stamp + fpCooldown // Wait x amount of time
+    const cooldown = await database.query( // Query cooldown
+        `SELECT cooldown FROM packs WHERE pack_id = 1;`,
+        {type: QueryTypes.DELETE, plain: true}
+    );
+    const newStamp = stamp + cooldown['cooldown'] // Wait x amount of time
     await database.query(
-        `UPDATE users SET free_pack_cooldown = ? WHERE user_id = ?;`,
+        `UPDATE user_cooldowns SET unix_stamp = ? WHERE user_id = ? AND pack_id = 1;`,
         {replacements: [newStamp, id], type: QueryTypes.DELETE}
     );
     return newStamp;

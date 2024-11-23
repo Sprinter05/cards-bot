@@ -24,10 +24,10 @@ exports.checkUser = async function(database, discordId){
 // Returns Epoch timestamp of free pack cooldown
 exports.getFreePackCooldown = async function(database, id){
     const stamp = await database.query(
-        `SELECT free_pack_cooldown FROM users WHERE user_id = ?`,
+        `SELECT unix_stamp FROM user_cooldowns WHERE user_id = ? AND pack_id = 1`,
         {replacements: [id], type: QueryTypes.SELECT, plain: true}
     )
-    return stamp;
+    return stamp['unix_stamp'];
 }
 
 // Return the amount of money the user has

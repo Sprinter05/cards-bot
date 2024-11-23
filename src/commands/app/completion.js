@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, Embed } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 var { Rarity } = require(appRoot + 'src/utils/exporter')
 var { checkMissingCards, checkUser, getCardData } = require(appRoot + 'src/utils/db/queries')
 
