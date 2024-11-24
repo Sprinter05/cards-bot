@@ -1,5 +1,6 @@
 // ? ES Modules
-// ! No hard coding packs
+// ? Abstract rarities from commands
+// * No pack selection in data section of commands
 // TODO: Card selling
 // TODO: Improve info embed
 // TODO: Battle command
