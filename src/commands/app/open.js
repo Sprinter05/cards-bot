@@ -1,19 +1,19 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { packInfo, getRarityCardsList, checkCardQuantity, queryPacks, checkUser } = require(appRoot + "src/utils/db/queries");
 const { insertCard, removePack } = require(appRoot + 'src/utils/db/manips')
-const { randomInt, Rarity, packOpenEmbed } = require(appRoot + 'src/utils/exporter')
+const { randomInt, packOpenEmbed } = require(appRoot + 'src/utils/exporter')
 
 function rollWithPercentages(nP, rP, urP, sP) {
     const check = randomInt(0, 99) // Percentage
     var findObj = '' // Rarity to find
     // Get percentages as ranges from 0 to 100
     const normal = nP, rare = nP + rP, ultrarare = nP + rP + urP, special = nP + rP + urP + sP
-    if (check >= 0 && check < normal) findObj = 'Normal'
-    else if (check >= normal && check < rare) findObj = 'Rare'
-    else if (check >= rare && check < ultrarare) findObj = 'Ultra Rare'
-    else if (check >= ultrarare && check < special) findObj = 'Special'
+    if (check >= 0 && check < normal) findObj = 1
+    else if (check >= normal && check < rare) findObj = 2
+    else if (check >= rare && check < ultrarare) findObj = 3
+    else if (check >= ultrarare && check < special) findObj = 4
     // Get rarity ID from name
-    return Object.keys(Rarity).find(key => Rarity[key].tag === findObj)
+    return findObj
 }
 
 module.exports = {

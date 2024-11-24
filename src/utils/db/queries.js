@@ -93,6 +93,15 @@ exports.packInfo = async function(database, pId){
     return packData
 }
 
+// Get all information about a rarity (mainly assets)
+exports.rarityInfo = async function(database, rId){
+    const rarityData = database.query(
+        `SELECT color, icon, emoji FROM cards_rarity WHERE card_rarity_id = ?;`,
+        {replacements: [rId], type: QueryTypes.SELECT, plain: true}
+    )
+    return rarityData
+}
+
 // Query cards by n entries depending on the page
 exports.queryCards = async function(database, id, page) {
     const offset = (page-1) * entries // Offset is where it starts 

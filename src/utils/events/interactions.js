@@ -1,7 +1,7 @@
 const { Events, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-var { checkUser, getAllCards, getCardData } = require(appRoot + 'src/utils/db/queries')
+var { checkUser, getAllCards, getCardData, rarityInfo } = require(appRoot + 'src/utils/db/queries')
 var { tradeCards, deleteAllData } = require(appRoot + 'src/utils/db/manips')
-var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, Rarity, tradeConfirmEmbed, tradeConfirmRow } = require(appRoot + 'src/utils/exporter');
+var { ddDataRow, cardEmbed, cardsMaxPage, cardRow, tradeConfirmEmbed, tradeConfirmRow } = require(appRoot + 'src/utils/exporter');
 
 // Used for card page next and previous
 async function handleCardMove(interaction, db) {
@@ -200,7 +200,8 @@ async function handleCardSelectorTrade(interaction, db){
     const cardStr = embed.description.replace("Trading for ", '')
     const ogCard = cardStr.replace(cardStr.split(" ")[0], '').replace(" ", '')
     const ogCardEmoji = cardStr.split(" ")[0]
-    const tradeCardEmoji = Rarity[queryCard['card_rarity_id']].emoji
+    const info = await rarityInfo(db, queryCard['card_rarity_id'])
+    const tradeCardEmoji = info['emoji']
     const embedString = `${ogCardEmoji} ${ogCard} ⇔ ${tradeCardEmoji} ${givenCard}`
 
     // You cannot trade the same card for the same card

@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle  } = require("discord.js")
-var { Rarity } = require(appRoot + 'src/utils/exporter')
-var { countCards, checkUser, getCardData, checkCardOwn } = require(appRoot + 'src/utils/db/queries')
+var { rarityInfo, countCards, checkUser, getCardData, checkCardOwn } = require(appRoot + 'src/utils/db/queries')
 
 module.exports = {
     // Define data to export to Discord
@@ -69,8 +68,10 @@ module.exports = {
         if (cardROwned === false) return await interaction.reply(`${userToTrade.username} doesn't have the requested card!`)
 
         // Build embed with information
-        const rarEmoji = Rarity[queryCard['card_rarity_id']].emoji
-        const rarREmoji = cardReq === null ? '' : Rarity[queryRCard['card_rarity_id']].emoji
+        const info = await rarityInfo(cardsdb, queryCard['card_rarity_id'])
+        const infoR = cardReq === null ? '' : await rarityInfo(cardsdb, queryRCard['card_rarity_id'])
+        const rarEmoji = info['emoji']
+        const rarREmoji = cardReq === null ? '' : infoR['emoji']
         const reqStr = cardReq === null ? 'None' : `${rarREmoji} ${cardReq}`
         var embed = new EmbedBuilder()
         .setTitle(`Trading requested to ${userToTrade.username}!`)

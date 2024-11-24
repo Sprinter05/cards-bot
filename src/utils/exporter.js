@@ -1,6 +1,6 @@
-var { countCards, queryCards, queryPacks, getCardData, packInfo } = require(appRoot + 'src/utils/db/queries')
+var { countCards, queryCards, queryPacks, getCardData, packInfo, rarityInfo } = require(appRoot + 'src/utils/db/queries')
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
-const { entries, rarColors, rarEmojis, rarIcons, pacEmojis, pacColors, pacIcons } = require(appRoot + 'config/properties.json')
+const { entries } = require(appRoot + 'config/properties.json')
 
 // Create a random integer between 2 values (both included)
 exports.randomInt = function(min, max) {
@@ -8,36 +8,6 @@ exports.randomInt = function(min, max) {
     const maxFloored = Math.floor(max);
     return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }  
-
-// Object array for getting card values
-//! Modify if more added
-const Rarity = Object.freeze({
-    '1': { // Normal
-        tag: 'Normal',
-        color: rarColors.nCard,
-        emoji: rarEmojis.nCard,
-        icons: rarIcons.nCard
-    },
-    '2': { // Rare
-        tag: 'Rare',
-        color: rarColors.rCard,
-        emoji: rarEmojis.rCard,
-        icons: rarIcons.rCard
-    },
-    '3': { // Ultra Rare
-        tag: 'Ultra Rare',
-        color: rarColors.urCard,
-        emoji: rarEmojis.urCard,
-        icons: rarIcons.urCard
-    },
-    '4': { // Special
-        tag: 'Special',
-        color: rarColors.sCard,
-        emoji: rarEmojis.sCard,
-        icons: rarIcons.sCard
-    }
-})
-exports.Rarity = Rarity // For use outside
 
 // Return the highest page that can be displayed
 exports.cardsMaxPage = async function(db, uID){
@@ -73,8 +43,9 @@ exports.cardRow = function(page, maxPage){
 // Create an embed for the card that is obtained in a pack opening
 exports.packOpenEmbed = async function(db, card, amount){
     const data = await getCardData(db, card, false)
-    const cardColor = exports.Rarity[data['card_rarity_id']].color
-    const cardIcon = exports.Rarity[data['card_rarity_id']].icons
+    const info = await rarityInfo(db, data['card_rarity_id'])
+    const cardColor = info['color']
+    const cardIcon = info['icon']
     const strCard = amount == 1 ? `First copy of this card!` : `You now have ${amount} copies of this card.`
     var embed = new EmbedBuilder()
         .setTitle(`You just got a __${data['card_name']}__!`)
@@ -96,7 +67,8 @@ exports.cardEmbed = async function(db, dbId, titleUser, userIcon, page){
     // Loop through all the keys on the objects and turn them into a formatted string
     for(let i = 0; i <= Object.keys(outputQuery).length-1; i++){
         // Get the card rarity
-        let rarityEmoji = exports.Rarity[outputQuery[i].card_rarity_id].emoji
+        const info = await rarityInfo(db, outputQuery[i].card_rarity_id)
+        let rarityEmoji = info['emoji']
         let countCard = '' // Card amount
         if (outputQuery[i].quantity !== 1) {countCard = `x${outputQuery[i].quantity}`}
         // Append to string

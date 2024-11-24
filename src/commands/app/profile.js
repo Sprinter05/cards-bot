@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-var { checkMoney, countCards, checkUser, checkMissingCards, getCardCount } = require(appRoot + 'src/utils/db/queries')
-var { rarEmojis, cEmoji } = require(appRoot + 'config/properties.json');
+var { rarityInfo, checkMoney, countCards, checkUser, checkMissingCards, getCardCount } = require(appRoot + 'src/utils/db/queries')
+var { cEmoji } = require(appRoot + 'config/properties.json');
 
 module.exports = {
     // Define data to export to Discord
@@ -26,9 +26,14 @@ module.exports = {
         const rCards = await countCards(cardsdb, dbId, 2) ?? 0
         const urCards = await countCards(cardsdb, dbId, 3) ?? 0
         const sCards = await countCards(cardsdb, dbId, 4) ?? 0
+        // Query all rarity information
+        const nInfo = await rarityInfo(cardsdb, 1)
+        const rInfo = await rarityInfo(cardsdb, 2)
+        const urInfo = await rarityInfo(cardsdb, 3)
+        const sInfo = await rarityInfo(cardsdb, 4)
         // Only show special cards if the user has them
-        const speString = sCards === 0 ? '' : `\n${rarEmojis.sCard} Special x${sCards}`
-        var cString = `${rarEmojis.nCard} Normal x${nCards}\n${rarEmojis.rCard} Rare x${rCards}\n${rarEmojis.urCard} Ultra Rare x${urCards}${speString}`
+        const speString = sCards === 0 ? '' : `\n${sInfo['emoji']} Special x${sCards}`
+        var cString = `${nInfo['emoji']} Normal x${nCards}\n${rInfo['emoji']} Rare x${rCards}\n${urInfo['emoji']} Ultra Rare x${urCards}${speString}`
 
         // Get completion percentage
         const missingCards = await checkMissingCards(cardsdb, dbId)

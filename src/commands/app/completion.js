@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-var { Rarity } = require(appRoot + 'src/utils/exporter')
-var { checkMissingCards, checkUser, getCardData } = require(appRoot + 'src/utils/db/queries')
+var { checkMissingCards, checkUser, getCardData, rarityInfo } = require(appRoot + 'src/utils/db/queries')
 
 module.exports = {
     // Define data to export to Discord
@@ -27,7 +26,8 @@ module.exports = {
             for (let i = 0; i < max; i++){
                 const name = missing[i].card_name
                 const cardData = await getCardData(cardsdb, name, false)
-                const emoji = Rarity[cardData['card_rarity_id']].emoji
+                const rarityData = await rarityInfo(cardsdb, cardData['card_rarity_id'])
+                const emoji = rarityData['emoji']
                 missingStr += i + 1 === max ? `${emoji} ${name}` : `${emoji} ${name}, `
             }
 

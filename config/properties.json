@@ -1,41 +1,5 @@
 {
     "entries": 10,
     "cEmoji": "<:coin:1214561654629728326>",
-    "logoURL": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/logo.png?inline=true",
-    "pacEmojis": {
-        "fPack": "<:free_pack:1212011824002760714>",
-        "sPack": "<:special_pack:1212011901651918869>",
-        "urPack": "<:ultra_pack:1212011924771045426>",
-        "ePack": "<:exclusive_pack:1212011946191102052>"
-    },
-    "pacIcons": {
-        "fPack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/free_pack.png?inline=true",
-        "sPack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/special_pack.png?inline=true",
-        "urPack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/ultra_pack.png?inline=true",
-        "ePack": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/exclusive_pack.png?inline=true"
-    },
-    "pacColors": {
-        "fPack": "#AA4601",
-        "sPack": "#FFBF03",
-        "urPack": "#FD3534",
-        "ePack": "#12C100"
-    },
-    "rarEmojis": {
-        "nCard": "<:normal_card:1208719611466616862>",
-        "rCard": "<:rare_card:1208721050783842314>",
-        "urCard": "<:ultrarare_card:1208721064339701770>",
-        "sCard": "<:special_card:1208721078403338240>"
-    },
-    "rarIcons": {
-        "nCard": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/normal.png?inline=true",
-        "rCard": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/rare.png?inline=true",
-        "urCard":"https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/ultrarare.png?inline=true",
-        "sCard": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/special.png?inline=true"
-    },
-    "rarColors": {
-        "nCard": "#8F8D8E",
-        "rCard": "#F29658",
-        "urCard": "#DB757B",
-        "sCard": "#F2CF44"
-    }
+    "logoURL": "https://files.sprintervps.party/filebrowser/api/public/dl/L6f_AQmp/logo.png?inline=true"
 }

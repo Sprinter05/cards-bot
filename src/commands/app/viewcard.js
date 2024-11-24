@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-var { getCardData, checkCardOwn, checkUser } = require(appRoot + 'src/utils/db/queries')
-var { Rarity } = require(appRoot + 'src/utils/exporter')
+var { getCardData, checkCardOwn, checkUser, rarityInfo } = require(appRoot + 'src/utils/db/queries')
 
 module.exports = {
     // Define data to export to Discord
@@ -49,8 +48,9 @@ module.exports = {
         const cardOwned = await checkCardOwn(cardsdb, dbId, outputCard['card_id'])
 
         // Build embed with the necessary information
-        const cardColor = Rarity[outputCard['card_rarity_id']].color
-        const cardIcon = Rarity[outputCard['card_rarity_id']].icons
+        const info = await rarityInfo(cardsdb, outputCard['card_rarity_id'])
+        const cardColor = info['color']
+        const cardIcon = info['icon']
         var footerText = ""
         if (cardOwned === true){footerText="You own this card"}
         else {footerText="You don't own this card"}
